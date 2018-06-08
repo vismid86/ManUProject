@@ -1,6 +1,6 @@
 #!/bin/bash
 pkill -9 python 
-chmod 777 /var/local/Health_Recorder.py
-python /var/local/Health_Recorder.py
+sudo chmod 777 /var/local/Health_Recorder.py
+sudo python /var/local/Health_Recorder.py
 
 
