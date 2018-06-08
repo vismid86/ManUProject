@@ -1,5 +1,6 @@
 #!/bin/bash
 sudo chmod 777 /var/local/Health_Recorder.py
-sudo python /var/local/Health_Recorder.py
+sudo python /var/local/Health_Recorder.py &
+
 
 
