@@ -23,8 +23,8 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 		s.send_header("Content-type", "text/html")
 		s.end_headers()
 		#Request HTML page starts
-		s.wfile.write("<html><head><title>HUMAN HEALTH RECORDER</title></head>")
-		s.wfile.write("<body><p><center><font size=\"6\">WELCOME TO HUMAN HEALTH RECORDER!!!TEST IT FINAL</font></center></p>");
+		s.wfile.write("<html><style> body {background-color: pink} </style><head><title>HUMAN HEALTH RECORDER</title></head>")
+		s.wfile.write("<body><p><center><font size=\"6\">WELCOME TO HUMAN HEALTH RECORDER!!!</font></center></p>");
 		s.wfile.write("<form action=\"/results\" method=\"post\">")
 		s.wfile.write("<fieldset>")
 		s.wfile.write("<legend>Age (Mandatory field)</legend>")
@@ -125,7 +125,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 		s.send_response(200)
 		s.send_header("Content-type", "text/html")
 		s.end_headers()
-		s.wfile.write("<html><head><title>HUMAN HEALTH RECORDER</title>")
+		s.wfile.write("<html><head><style> body {background-color: aqua} </style><title>HUMAN HEALTH RECORDER</title>")
 		s.wfile.write("<style>")
 		s.wfile.write("table, th, td \{")
 		s.wfile.write("border: 1px solid black;")
