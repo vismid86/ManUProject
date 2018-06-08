@@ -2,6 +2,7 @@
 # This Application Deploys a Web Page to collect Human Health Records from Users and Display the entered details.
 
 #                 DEPLOYMENT SERVER IP ADDRESS - http://54.252.161.195/ 
+# or Public DNS:  http://ec2-54-252-161-195.ap-southeast-2.compute.amazonaws.com/
 
 
 # 1. It uses AWS CodeDeploy Service and GitHub Trigger to continously Deploy to the Deployment server - http://54.252.161.195/ - EC2 instance in AWS
