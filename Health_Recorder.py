@@ -24,7 +24,7 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 		s.end_headers()
 		#Request HTML page starts
 		s.wfile.write("<html><head><title>HUMAN HEALTH RECORDER</title></head>")
-		s.wfile.write("<body><p><center><font size=\"6\">WELCOME TO HUMAN HEALTH RECORDER!!!</font></center></p>");
+		s.wfile.write("<body><p><center><font size=\"6\">WELCOME TO HUMAN HEALTH RECORDER!!!TEST IT FINAL</font></center></p>");
 		s.wfile.write("<form action=\"/results\" method=\"post\">")
 		s.wfile.write("<fieldset>")
 		s.wfile.write("<legend>Age (Mandatory field)</legend>")
