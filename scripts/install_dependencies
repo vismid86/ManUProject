@@ -1,6 +1,6 @@
 #!/bin/bash
-yum install python
-yum install python-pip
+yum install -y python
+yum install -y python-pip
 
 
 

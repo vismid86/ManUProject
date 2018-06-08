@@ -1,6 +1,6 @@
 #!/bin/bash
 service httpd stop 
 pkill -9 python 
-python /var/local/myHealthPredictor.py
+python /var/local/Health_Recorder.py
 
 
