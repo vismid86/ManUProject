@@ -1,3 +1,6 @@
 #!/bin/bash
-yum install -y httpd
+yum install python
+yum install python-pip
+
+
 
