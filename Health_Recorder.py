@@ -143,6 +143,8 @@ class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 			s.wfile.write("<td>  %s</td>" % str(re.sub(r'_', " ", v)).upper())
 			s.wfile.write("</tr>")
 		s.wfile.write("</table>")
+		s.wfile.write("<body><p>Next steps are to Check the Lambda Function using API Gateway</p");
+		s.wfile.write("Do you want to Trigger Lambda Function? Click This >> <a href="https://xrhdob075j.execute-api.ap-southeast-2.amazonaws.com/staging/MyLambdaFunction"> LambdaFunction</a><br /></p>")
 		s.wfile.write("</fieldset>")		
 		s.wfile.write("</form>")
 		s.wfile.write("</body></html>")
