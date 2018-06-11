@@ -1,5 +1,6 @@
 # ManUProject
-# This Application Deploys a Web Page to collect Human Health Records from Users and Display the entered details.
+# This Application Deploys a Web Page to collect Human Health Records from Users and Display the entered details in the next page.
+# API Gateway call through Lambda function is also implemented.
 
 #                 DEPLOYMENT SERVER IP ADDRESS - http://54.252.161.195/ 
 # or Public DNS:  http://ec2-54-252-161-195.ap-southeast-2.compute.amazonaws.com/
@@ -12,5 +13,4 @@
 # Do any changes to Health_Recorder.py script to test the CI/CD Pipeline.
 # Refresh the Page 
 
-# Exploring on lambda Function
 
