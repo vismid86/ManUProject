@@ -1,0 +1,32 @@
+dist: trusty
+sudo: required
+
+services:
+  - docker
+
+#blocklist
+branches:
+  except
+    - master
+
+language: 
+  - c
+  - python
+
+before_install:
+  - docker pull ubuntu:16.04
+  - docker build .
+
+install: 
+  - ./install-apt.sh
+
+script: 
+  - ifconfig
+  - cd examples
+  - make -j2 -s blinky &
+  - python Health_Recorder.py
+
+notifications:
+ email:
+  recipients:
+    -vismid89@gmail.com
