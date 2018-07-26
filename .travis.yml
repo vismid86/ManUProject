@@ -13,8 +13,11 @@ language:
   - c
   - python
 
+before_install:
+  - chmod +x install-apt.sh
+  
 install: 
-  - ./install-apt.sh
+  - sh install-apt.sh
 
 script: 
   - ifconfig
