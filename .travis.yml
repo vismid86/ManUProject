@@ -18,7 +18,6 @@ install:
 
 script: 
   - ifconfig
-  - cd examples
   - make -j2 -s blinky &
   - python Health_Recorder.py
 

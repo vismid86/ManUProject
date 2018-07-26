@@ -1,7 +1,6 @@
 #Importing Required Packages
 import time
 import BaseHTTPServer
-import pymysql
 import re
 
 #Variable declarations
