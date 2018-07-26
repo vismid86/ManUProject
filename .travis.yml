@@ -18,12 +18,8 @@ install:
 
 script: 
   - ifconfig
-  - scriptlog=$(mktemp)
-  - exec > $scriptlog
-  - exec 2>&1
   - cd blinky
   - make
-  - cat $scriptlog 
 #  - sudo python Health_Recorder.py
 
 notifications:
