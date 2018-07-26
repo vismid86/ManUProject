@@ -1,41 +1,32 @@
 dist: trusty
 sudo: required
-
 services:
-  - docker
-
-#blocklist
+- docker
 branches:
   only:
-    - travis-ci
-
-language: 
-  - c
-  - python
-
+  - travis-ci
+language:
+- c
+- python
 before_install:
-  - chmod +x install-apt.sh
-  - tr -d '\r' < install-apt.sh > install-apt-r.sh
-  - chmod +x install-apt-r.sh
-
-install: 
-  - sh install-apt-r.sh
-
-script: 
-  - ifconfig
-  - cd blinky
-  - make
-#  - sudo python Health_Recorder.py
-
+- chmod +x install-apt.sh
+- tr -d '\r' < install-apt.sh > install-apt-r.sh
+- chmod +x install-apt-r.sh
+install:
+- sh install-apt-r.sh
+script:
+- ifconfig
+- cd blinky
+- make
 notifications:
- email:
-  recipients:
+  email:
+    recipients:
     - vismid89@gmail.com
-  on_pull_requests: false
-  on_success: always
-  on_failure: always
-  on_start: always
-  on_cancel: always
-  on_error: always
-
-    
+    on_pull_requests: false
+    on_success: always
+    on_failure: always
+    on_start: always
+    on_cancel: always
+    on_error: always
+  slack:
+    secure: f3pCDjDrVs9eAhgjk1yBBWx///bFN92J824p0FSVtDIF/0YyMGBdBNsIpzmFlglZmdRhwiOo68CkmJ1hTdYJrfkU8kwkDAnuLLxpgDYtltO8SnD1S1oOlHLAJ05pWv0giWC6WeBxlxAA3DWfKDi5vT98kiqxUjfoLMVjv5jCaBHrVP0S6P4ezQCU7Jt47cpjjwqgxAWcnQIzHCRhaevd+HarUiIqSE4IvllGHDJ8PRI/CoAqMclomzEOYKG66XSKECGkKr5mttGBg4xnxDh61GW2LmMiHKnRJGLrIptE1xClgosdJEjPLOj5NVnvEhhU2z2sBtPq6TZUPupZl3RwArdPNERczfDBAmoNA5a3oa4EbUquYDr/f/GEyEWFIhg5SXnuKlWLcN8lqs/YMdHOU4/9KQuLhbhfg479fzj3yJCOZBdZH5nZhkRuz0RzVFIEfxF/iuY8HxsNpODQaN8Bwud45Yg5urIhbw/nLOd/fkiETpk7r4AqDM2ZU78B3QrLYu/ftMiKci4V2sLaf9dNBaT/v4ZmZLNv0tGuO4B1HbRPBOax1w32M3oAgoT/uYGYJsttLuMCf2KZPNsgm99fJkPJiMJkZTnqXVSau2yrHCw8mNhyl/Yq6Fj0DdfFGxUfVlQv/0nwHiBNYZCcR+tPDl6A5BmqPZLg/ACk9mZAHJs=
