@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 while ! sudo apt-get update; do sleep 15; done;
 while ! sudo apt-get -y install bc make gcc gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf gnuplot jshon ccache curl zip liblapacke-dev libnlopt-dev libssl-dev libfftw3-dev python2.7-dev python-pip python-matplotlib python-numpy python-scipy parallel bsdmainutils; do sleep 15; done;
 
