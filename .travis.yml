@@ -18,8 +18,8 @@ install:
 
 script: 
   - ifconfig
-  - make -j2 -s blinky 
-  - sudo python Health_Recorder.py
+  - make blinky 
+#  - sudo python Health_Recorder.py
 
 notifications:
  email:
