@@ -7,7 +7,7 @@ services:
 #blocklist
 branches:
   except
-    - master
+    - travis-ci
 
 language: 
   - c
