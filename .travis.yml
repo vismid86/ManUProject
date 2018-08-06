@@ -16,11 +16,19 @@ before_install:
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
 install: 
-- sh install-apt-r.sh
-script:
-- ifconfig
-- cd blinky
-- make
+# sh install-apt-r.sh
+- PATH=/opt/gcc-arm/bin:$PATH
+jobs:
+  include:
+    - stage: build
+      script:
+        - echo "build stage"
+        - ifconfig
+    - stage: release
+      script:
+        - echo "release stage"
+        - cd blinky
+        - make
 notifications:
   email:
     recipients:
