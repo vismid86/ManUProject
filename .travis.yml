@@ -19,12 +19,15 @@ install:
 # sh install-apt-r.sh
 - PATH=/opt/gcc-arm/bin:$PATH
 jobs:
+  if: branch = travis-ci
   include:
     - stage: build
+    if: type = pull_request
       script:
         - echo "build stage"
         - ifconfig
     - stage: release
+    if: type = push
       script:
         - echo "release stage"
         - cd blinky
