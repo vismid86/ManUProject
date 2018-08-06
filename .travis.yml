@@ -12,8 +12,7 @@ before_install:
 - chmod +x install-apt.sh
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
-install:
-#- sh install-apt-r.sh
+install: 
 script:
 - ifconfig
 - cd blinky
@@ -28,5 +27,5 @@ notifications:
     on_start: always
     on_cancel: always
     on_error: always
-  slack: myriota:1nrMFwvrTHHoVEySFzYZBggd
-    
+  slack:
+    secure: EEMH2Bx0yRdgGBITa4EjHe1MKoOwSFdfu9bLXC1PelMTMJUW1qSxxV5FLb4Y3qI7rHtY5MMpWZ1eHTvK0qxi578ySkWsYBAipJfGNcxpFsHOb0bmydgXSfnKGqpSPP5m/sJzzCLl+TJKI4unRT9Gd5WkXbuJWD5x+Vd6q2T3Y/g+T+JC+vHVl8xM5jRxPhPR9Ku9EX9S0adqsRg20MZWsQ6OafrvfMSXu0BHlImVO9Rzq23Z5sLm00bk3OvpFZHSq/3lHQzqz0pncSRHoMG+aXDaIm1m9p4UG1J/Q0MmK7IekjXFvAOk5g6WUCE63wZxRcq5p6FWU7UFUAzpE8VLWFl9rakEWF4Ys9QTtJLaAdpy+5s8gwnz/HlGfiUvG3nH9Vy59MbROY5sp1UMMolKqYEofVCSpFR14p0TSU20+hJfOsXQ6g6un3n9SkM0Vxf4akk0ObS2DXHXQUvJeUehr+Q31m63WLnh1tFxuxLx13sep7i2TE36zZB/NrqaFyGhDT169fEa1j+JfS9/xMLP0AK1pCEZOu12thW1ECLB50fvRQgiwNTw3/0TXYhNyQLEV6dAPt/MIXIygl0u+5GfIihxZjINrWC2+d+Q2wQr6xvxIneo7TM3uCCqgCBIjvlJ3oBWv6msbOsag9stFWM4+GC/gsbzfa4519maQlHzAxM=
