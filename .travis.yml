@@ -16,7 +16,7 @@ before_install:
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
 install: 
-- sh install-apt.sh
+- sh install-apt-r.sh
 script:
 - ifconfig
 - cd blinky
