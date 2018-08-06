@@ -18,20 +18,35 @@ before_install:
 install: 
 - sh install-apt-r.sh
 - PATH=/opt/gcc-arm/bin:$PATH
-jobs:
-  if: branch = travis-ci
+#jobs:
+#  if: branch = travis-ci
+#  include:
+#    - stage: build
+#      if: type = push
+#      script:
+#        - echo "build stage"
+#        - ifconfig
+#    - stage: release
+#      if: type = push
+#      script:
+#        - echo "release stage"
+#        - cd blinky
+#        - make
+script: make $TEST_SUITE
+matrix:
+  fast_finish: true
   include:
-    - stage: build
-      if: type = push
-      script:
-        - echo "build stage"
-        - ifconfig
-    - stage: release
-      if: type = push
-      script:
-        - echo "release stage"
-        - cd blinky
-        - make
+  - name: "Terminal Test"
+    env: TEST_SUITE=terminal/test
+    script:
+      - echo "Suite 1 is working in script phase"
+  - name: "Satellite test"
+    env: TEST_SUITE=satellite/test
+    install:
+      - echo "suite 2 is working in install phase"
+  - name: "SDK"
+    env: TEST_SUITE=sdk/test
+  
 notifications:
   email:
     recipients:
