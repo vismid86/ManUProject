@@ -9,6 +9,9 @@ language:
 - c
 - python
 before_install:
+# Docker image for ubuntu
+- docker pull ubuntu:16.04
+- docker build .
 - chmod +x install-apt.sh
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
