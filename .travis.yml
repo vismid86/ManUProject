@@ -22,12 +22,12 @@ jobs:
   if: branch = travis-ci
   include:
     - stage: build
-    if: type = pull_request
+      if: type = push
       script:
         - echo "build stage"
         - ifconfig
     - stage: release
-    if: type = push
+      if: type = pull_request
       script:
         - echo "release stage"
         - cd blinky
