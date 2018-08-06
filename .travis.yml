@@ -28,10 +28,5 @@ notifications:
     on_start: always
     on_cancel: always
     on_error: always
-  slack:
-    on_success: always
-    on_failure: always
-    rooms:
-      secure: h3RIGFr2I5bA9hsN1Dy4UVdxtYRMmXpPvVwSCEiLzWWXMV5kFb0bk7egFvgxeZsVgGCZ059pvuFufPTMwYnoFtLjyajF0Zg8DDthNFzS5A9K1XlRzwPRxoK0w7mQWMhkzy7khu8rlN8yTAjydOM7IrSZFmlfALBEczSzpKR4JUxxpiJfQg30hG6Tr4b4c0frbv0KSgMzexE3Q10SNDZTBr8XUHgQ7eyRqUPZgpgGN5qhYt+3VkyJmfnXRX0sKB/0aXFq7DWZoPX+OfH4O4R6MbjlML7Tae3kiqOguajBjZlUSLJ53jx8P9d4Or9+ZT7hONNJf6m4tgckukSOnuXSGK9EAHWFKIHw3zJIsD0WV9Q11s5SFGAFCd5Ob5yo+Xny8fpN4YtsYBplcm46Lsp5E2sZGq3aE1ZCChtQZEUQE8B6lLWxhFeNEDTz4mnBNlnX2CafV+J8+gGaDyDponQFEcICRwKzztX/k3JsuPSZ6d9VmXI9qOM0WsTlvB+ka8hWMDjgLQIjjZDTcTq4KorLFJE3YXi7qJ7FE3let/GNyGse6J1CukKA6ewSzcnE5FAq2Vw8LHJa1gTYYYB9LiVwU1GYOxrP+HjuPKuwOcVThUHx0j3LHlokyUPyZGCrtp6EgEk7sWUDN7x6uevMM7BFaqwZh8QOmG+DbIqRnTcbNTI=
-
+  slack: myriota:1nrMFwvrTHHoVEySFzYZBggd
     
