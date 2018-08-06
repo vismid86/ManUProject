@@ -4,7 +4,7 @@ import BaseHTTPServer
 import re
 
 #Variable declarations
-HOST_NAME = '0.0.0.0'
+HOST_NAME = 'localhost'
 PORT_NUMBER = 80
 
 #Class for Handling the HTTP Requests

@@ -13,7 +13,7 @@ before_install:
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
 install:
-- sh install-apt-r.sh
+#- sh install-apt-r.sh
 script:
 - ifconfig
 - cd blinky
@@ -29,6 +29,8 @@ notifications:
     on_cancel: always
     on_error: always
   slack:
-    secure: f3pCDjDrVs9eAhgjk1yBBWx///bFN92J824p0FSVtDIF/0YyMGBdBNsIpzmFlglZmdRhwiOo68CkmJ1hTdYJrfkU8kwkDAnuLLxpgDYtltO8SnD1S1oOlHLAJ05pWv0giWC6WeBxlxAA3DWfKDi5vT98kiqxUjfoLMVjv5jCaBHrVP0S6P4ezQCU7Jt47cpjjwqgxAWcnQIzHCRhaevd+HarUiIqSE4IvllGHDJ8PRI/CoAqMclomzEOYKG66XSKECGkKr5mttGBg4xnxDh61GW2LmMiHKnRJGLrIptE1xClgosdJEjPLOj5NVnvEhhU2z2sBtPq6TZUPupZl3RwArdPNERczfDBAmoNA5a3oa4EbUquYDr/f/GEyEWFIhg5SXnuKlWLcN8lqs/YMdHOU4/9KQuLhbhfg479fzj3yJCOZBdZH5nZhkRuz0RzVFIEfxF/iuY8HxsNpODQaN8Bwud45Yg5urIhbw/nLOd/fkiETpk7r4AqDM2ZU78B3QrLYu/ftMiKci4V2sLaf9dNBaT/v4ZmZLNv0tGuO4B1HbRPBOax1w32M3oAgoT/uYGYJsttLuMCf2KZPNsgm99fJkPJiMJkZTnqXVSau2yrHCw8mNhyl/Yq6Fj0DdfFGxUfVlQv/0nwHiBNYZCcR+tPDl6A5BmqPZLg/ACk9mZAHJs=
-    on_success: always
-    on_failure: always
+    rooms:
+      secure: gMa/lOwV689rYAxhL4pNHiBCpbbKEpHvFcsNC3Lb6iiDfHIqIMqgx+LnLi9JOpUMPDAZBbWcqLxVrr7ZlroQaOSl8T2vYwDvYzb15wzQJ4KY5Ik5zhe3CmcYOt9srxZ/ep/7hJzpt2OqMajr/WZgkdW0uwFeVqd8SyU6tiWTK7GmUJxv+ZKHzwCPf3uCh5rVOsXo4tu1jdRkFFipc+ID8BMdEGMd6YMuULHwpq/b80QIeIYwVLgeaIjHioETs5DijMNzyG1g6hANhdF4yG2bK3mcb0U2ODMfymrJOMvk3etJK1viKO0bgK1lsz951Udztv8eYeZqXWsT4v60iBpMha4up/GU72GUx97DRXIVtyertuh0J2vK+4pF3hXKDLIuKaVGwxSUU6YfARiy8/Khq7ToQnLTD9w/eYN0DBSJB+wMfyRga5slt1pXSkMiGMf8BHgR6wvbFPIp0PSw//jCza6RgkVo+n80CEVTpjhWLY53jzjhtnEe+uX4u11+AmlY0oNJLKA+Xtc0zUNUsG+ecQw+1RYOOB+O7otc6+PPFJKfa4NaX+n0/gV2MOh73fq4h5pFFnEfsALcHmyGuC/bdI5PSo/PLYEKdrI44GDdr9MeGgmYRbmlAauHj2ThnbIcxS2+F4ZIZJk9RK8726rzGnkrrgPeLyHplc2sgYMFKGo=
+      on_success: change
+      on_failure: always
+    
