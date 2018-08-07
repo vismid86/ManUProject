@@ -29,7 +29,7 @@ jobs:
     env: TEST_SUITE=deploy/test
     script: ifconfig
 after_script: 
-  - make test
+  - ./userdata.sh
 #addons:
 #  artifacts:
     # ...
