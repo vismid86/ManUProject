@@ -23,15 +23,14 @@ cache:
 install:
 - sh install-apt-r.sh
 - PATH=/opt/gcc-arm/bin:$PATH
+env: TEST_SUITE=-j3 terminal/test
+env: TEST_SUITE=-j2 sdk/test
+env: TEST_SUITE=commslib/test
+env: TEST_SUITE=satellite/test
+env: TEST_SUITE=-j3 tools/test
+env: TEST_SUITE=apps/test
+env: TEST_SUITE=math/test
 script: make $TEST_SUITE
-matrix:
-  fast_finish: true
-  if: branch = travis-ci
-  include:
-  - name: Terminal Test
-    env: TEST_SUITE=-j3 terminal/test
-  - name: SDK Test
-    env: TEST_SUITE=-j2 sdk/test
 after_script: 
   - ./userdata.sh
 #addons:
