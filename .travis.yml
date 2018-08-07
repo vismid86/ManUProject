@@ -19,7 +19,7 @@ install:
 - PATH=/opt/gcc-arm/bin:$PATH
 script: 
   - cd blinky
-  - make blinky
+  - make
 notifications:
   email:
     recipients:
