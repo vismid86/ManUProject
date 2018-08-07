@@ -21,25 +21,21 @@ script: make $TEST_SUITE
 matrix:
   fast_finish: true
   include:
-  - name: Satellite test
+  - stage: test
+    name: Satellite test
+    allow_failures:
     env: TEST_SUITE=satellite/test
-  - name: SDK
+    name: SDK
     env: TEST_SUITE=sdk/test
-  - name: staging jobs
-    jobs:
-      if: branch = travis-ci
-      include:
-      - stage: build
-        if: type = push
-        script:
-        - echo "build stage"
-        - ifconfig
-      - stage: release
-        if: type = push
-        script:
-        - echo "release stage"
-        - cd blinky
-        - make
+jobs:
+  if: branch = travis-ci
+  include:
+  - stage: deploy
+    name: "Building Stuffs"
+    if: type = push
+    script:
+    - echo "build stage"
+    - ifconfig
 notifications:
   email:
     recipients:
@@ -50,8 +46,12 @@ notifications:
     on_start: always
     on_cancel: always
     on_error: always
-  slack:
-    secure: OPj+OJ7X7cpLVb2I9or4WXl+mr+LsvGWIDTDCU8rmn8rKs+24glRMVDYCdSMFz25nDwEn+/CU/F0cLQtMDQm58Dv9Vaq01l0KTettPyPWBmqog+Koi+ICs89fUJkDQz+LNNjZGaoT0ZYXUGyvCd9MYopTGmyoFEQ7PV8/spUshe9T7HdKy3J4U45YX2E4xpuqqXBZ+DRX3/fQuSEneNi4NUHGqQOqSnOnuWog35/cj8cbvqusEK0MGXp6svDq5x8UZNJ15tlalR3u3vXXkyomRsHDzYrIbEz5lVe8V04L3UJRD5uCG00TrI+otsNtSl3bVHJTxH1UBj6jdMp0/TmvpQBjALZ6FbUTYdmmN+Y6wI9VfMc8RtP6kMnyD0xZ5Er/RiN2F8elnABLCyyNDuGhryHAT1ALLYs6iFCSSQ9iFTPXSw4USKL2NKnKX/2y/8wgLTtRxcToBbCewy67tALFkf+Fgm89nAtkk3isuRAeSkYt6a2XouE3Au5Pm5QOOXYUCP6WYZaoJ88aaelva5KF7u5wvs2uJXzoelVmVO/gQdINpuIjRkQkaeSZRYONjVVRc82M5USpGNKisQ2rd/lreV3By7BnyohZ09DI3iWD+w5OKA+hQc8jVZSbgBq6GAfaliRCHL/vgYrm0rny5RAvoKHNG6q0aawP3GaKEL7oqo=
-    on_success: always
+  slack: slacky
+#    secure: OPj+OJ7X7cpLVb2I9or4WXl+mr+LsvGWIDTDCU8rmn8rKs+24glRMVDYCdSMFz25nDwEn+/CU/F0cLQtMDQm58Dv9Vaq01l0KTettPyPWBmqog+Koi+ICs89fUJkDQz+LNNjZGaoT0ZYXUGyvCd9MYopTGmyoFEQ7PV8/spUshe9T7HdKy3J4U45YX2E4xpuqqXBZ+DRX3/fQuSEneNi4NUHGqQOqSnOnuWog35/cj8cbvqusEK0MGXp6svDq5x8UZNJ15tlalR3u3vXXkyomRsHDzYrIbEz5lVe8V04L3UJRD5uCG00TrI+otsNtSl3bVHJTxH1UBj6jdMp0/TmvpQBjALZ6FbUTYdmmN+Y6wI9VfMc8RtP6kMnyD0xZ5Er/RiN2F8elnABLCyyNDuGhryHAT1ALLYs6iFCSSQ9iFTPXSw4USKL2NKnKX/2y/8wgLTtRxcToBbCewy67tALFkf+Fgm89nAtkk3isuRAeSkYt6a2XouE3Au5Pm5QOOXYUCP6WYZaoJ88aaelva5KF7u5wvs2uJXzoelVmVO/gQdINpuIjRkQkaeSZRYONjVVRc82M5USpGNKisQ2rd/lreV3By7BnyohZ09DI3iWD+w5OKA+hQc8jVZSbgBq6GAfaliRCHL/vgYrm0rny5RAvoKHNG6q0aawP3GaKEL7oqo=
+  on_success: always
+  on_failure: always
+  on_start: always
+  on_cancel: always
+  on_error: always
 
     
