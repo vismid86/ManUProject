@@ -5,6 +5,12 @@ services:
 branches:
   only:
   - travis-ci
+cache: 
+  ccache: true
+  pip: true
+  directories:
+    - dpdk
+    - node_modules
 language:
 - c
 - python
@@ -14,22 +20,17 @@ before_install:
 - chmod +x install-apt.sh
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
-cache: 
-  ccache: true
-  pip: true
-  directories:
-    - dpdk
-    - node_modules
-install:
 - sh install-apt-r.sh
+install:
 - PATH=/opt/gcc-arm/bin:$PATH
-env: TEST_SUITE=-j3 terminal/test
-env: TEST_SUITE=-j2 sdk/test
-env: TEST_SUITE=commslib/test
-env: TEST_SUITE=satellite/test
-env: TEST_SUITE=-j3 tools/test
-env: TEST_SUITE=apps/test
-env: TEST_SUITE=math/test
+env: 
+  - TEST_SUITE=-j3 terminal/test
+  - TEST_SUITE=-j2 sdk/test
+  - TEST_SUITE=commslib/test
+  - TEST_SUITE=satellite/test
+  - TEST_SUITE=-j3 tools/test
+  - TEST_SUITE=apps/test
+  - TEST_SUITE=math/test
 script: make $TEST_SUITE
 after_script: 
   - ./userdata.sh
