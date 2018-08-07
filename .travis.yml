@@ -14,22 +14,27 @@ before_install:
 - chmod +x install-apt.sh
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
+cache: 
+  ccache: true
+  pip: true
+  directories:
+    - dpdk
+    - node_modules
 install:
-###- sh install-apt-r.sh
+- sh install-apt-r.sh
 - sudo -H pip install --upgrade pip pyserial awscli
 - PATH=/opt/gcc-arm/bin:$PATH
-script: make $TEST_SUITE
 env:
 - TEST_SUITE=satellite/test
 - TEST_SUITE=sdk/test
+script: make $TEST_SUITE
 jobs:
   if: branch = travis-ci
   include:
-  - stage: deploy
+  - stage: test
     name: Building Stuffs
     if: type = push
-    env: TEST_SUITE=deploy/test
-    script: ifconfig
+    script: make deloy/test
 after_script: 
   - ./userdata.sh
 #addons:
