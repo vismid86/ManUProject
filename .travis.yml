@@ -15,7 +15,7 @@ before_install:
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
 install:
-- sh install-apt-r.sh
+#- sh install-apt-r.sh
 - PATH=/opt/gcc-arm/bin:$PATH
 script: 
   - cd blinky
