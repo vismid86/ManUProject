@@ -25,20 +25,20 @@ matrix:
     env: TEST_SUITE=satellite/test
   - name: SDK
     env: TEST_SUITE=sdk/test
-jobs:
-  if: branch = travis-ci
-  include:
-  - stage: build
-    if: type = push
-    script:
-    - echo "build stage"
-    - ifconfig
-  - stage: release
-    if: type = push
-    script:
-    - echo "release stage"
-    - cd blinky
-    - make
+    jobs:
+      if: branch = travis-ci
+      include:
+      - stage: build
+        if: type = push
+        script:
+        - echo "build stage"
+        - ifconfig
+      - stage: release
+        if: type = push
+        script:
+        - echo "release stage"
+        - cd blinky
+        - make
 notifications:
   email:
     recipients:
