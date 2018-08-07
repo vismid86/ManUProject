@@ -17,6 +17,14 @@ before_install:
 install:
 - sh install-apt-r.sh
 - PATH=/opt/gcc-arm/bin:$PATH
+script: make $TEST_SUITE
+matrix:
+  fast_finish: true
+  include:
+  - name: Satellite test
+    env: TEST_SUITE=satellite/test
+  - name: SDK
+    env: TEST_SUITE=sdk/test
 jobs:
   if: branch = travis-ci
   include:
@@ -31,14 +39,6 @@ jobs:
     - echo "release stage"
     - cd blinky
     - make
-script: make $TEST_SUITE
-matrix:
-  fast_finish: true
-  include:
-  - name: Satellite test
-    env: TEST_SUITE=satellite/test
-  - name: SDK
-    env: TEST_SUITE=sdk/test
 notifications:
   email:
     recipients:
@@ -52,3 +52,5 @@ notifications:
   slack:
     secure: OPj+OJ7X7cpLVb2I9or4WXl+mr+LsvGWIDTDCU8rmn8rKs+24glRMVDYCdSMFz25nDwEn+/CU/F0cLQtMDQm58Dv9Vaq01l0KTettPyPWBmqog+Koi+ICs89fUJkDQz+LNNjZGaoT0ZYXUGyvCd9MYopTGmyoFEQ7PV8/spUshe9T7HdKy3J4U45YX2E4xpuqqXBZ+DRX3/fQuSEneNi4NUHGqQOqSnOnuWog35/cj8cbvqusEK0MGXp6svDq5x8UZNJ15tlalR3u3vXXkyomRsHDzYrIbEz5lVe8V04L3UJRD5uCG00TrI+otsNtSl3bVHJTxH1UBj6jdMp0/TmvpQBjALZ6FbUTYdmmN+Y6wI9VfMc8RtP6kMnyD0xZ5Er/RiN2F8elnABLCyyNDuGhryHAT1ALLYs6iFCSSQ9iFTPXSw4USKL2NKnKX/2y/8wgLTtRxcToBbCewy67tALFkf+Fgm89nAtkk3isuRAeSkYt6a2XouE3Au5Pm5QOOXYUCP6WYZaoJ88aaelva5KF7u5wvs2uJXzoelVmVO/gQdINpuIjRkQkaeSZRYONjVVRc82M5USpGNKisQ2rd/lreV3By7BnyohZ09DI3iWD+w5OKA+hQc8jVZSbgBq6GAfaliRCHL/vgYrm0rny5RAvoKHNG6q0aawP3GaKEL7oqo=
     on_success: always
+
+    
