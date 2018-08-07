@@ -83,7 +83,7 @@ update_results() {
 #PATH=/opt/gcc-arm/bin:$PATH
 
 # the revision number for this branch
-revision=$(git rev-parse HEAD)
+revision=$TRAVIS_BRANCH
 
 # Run tests in separate processes to allow finer control of parallelism, e.g. devops can gave lots of threads
 #(

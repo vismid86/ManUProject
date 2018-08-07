@@ -2,17 +2,17 @@
 ##  Myriota Pty Ltd
 ##  Myriota Confidential
 
-# Branch under test.
-# Default is current branch if not set in an environment variable
-export BRANCH?=$(shell git rev-parse --abbrev-ref HEAD)
+# TRAVIS_TRAVIS_BRANCH under test.
+# Default is current TRAVIS_TRAVIS_BRANCH if not set in an environment variable
+#export TRAVIS_BRANCH?=$(shell git rev-parse --abbrev-ref HEAD)
 
-# current remote/branch
+# current remote/TRAVIS_BRANCH
 tracking:=$(shell git rev-parse --abbrev-ref @{u})
 # current remote
-remote:=$(patsubst %/$(BRANCH), %, $(tracking))
+remote:=$(patsubst %/$(TRAVIS_BRANCH), %, $(tracking))
 
 # Repository/remote url under test.
-# Default is url of current branch if not set in environment variable
+# Default is url of current TRAVIS_BRANCH if not set in environment variable
 export REPOSITORY?=$(shell git remote get-url $(remote))
 
 # The current test runner ami
@@ -27,7 +27,7 @@ userdatascript:=$(shell mktemp)
 # Create user data script and launch test instance
 test: $(userdatascript) .FORCE
 	./userdata.sh
-	
+
 # Run script locally
 #local: $(userdatascript) .FORCE
 #	printf "\nGithub badge links:"
@@ -35,11 +35,11 @@ test: $(userdatascript) .FORCE
 #	bash $(userdatascript)
 
 $(userdatascript) : .FORCE
-	@echo "Executing tests on: "$(REPOSITORY)/$(BRANCH)
-	@echo "Test results stored at s3://com.myriota.test-logs/"$(REPOSITORY)/$(BRANCH)
+	@echo "Executing tests on: "$(REPOSITORY)/$(TRAVIS_BRANCH)
+	@echo "Test results stored at s3://com.myriota.test-logs/"$(REPOSITORY)/$(TRAVIS_BRANCH)
 	echo "#!/bin/bash -x" > $(userdatascript)
 	echo "" >> $(userdatascript)
-	echo "branch="$(BRANCH) >> $(userdatascript)
+	echo "TRAVIS_BRANCH="$(TRAVIS_BRANCH) >> $(userdatascript)
 	echo "repository="$(REPOSITORY) >> $(userdatascript)
 	echo "" >> $(userdatascript)
 #	cat userdata.sh >> $(userdatascript)
