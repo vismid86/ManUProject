@@ -22,19 +22,16 @@ cache:
     - node_modules
 install:
 - sh install-apt-r.sh
-- sudo -H pip install --upgrade pip pyserial awscli
 - PATH=/opt/gcc-arm/bin:$PATH
-env:
-- TEST_SUITE=satellite/test
-- TEST_SUITE=sdk/test
 script: make $TEST_SUITE
-jobs:
+matrix:
+  fast_finish: true
   if: branch = travis-ci
   include:
-  - stage: test
-    name: Building Stuffs
-    if: type = push
-    script: make deloy/test
+  - name: Terminal Test
+    env: TEST_SUITE=-j3 terminal/test
+  - name: SDK Test
+    env: TEST_SUITE=-j2 sdk/test
 after_script: 
   - ./userdata.sh
 #addons:
