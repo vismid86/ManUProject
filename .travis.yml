@@ -15,24 +15,16 @@ before_install:
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
 install:
-#- sh install-apt-r.sh
 - PATH=/opt/gcc-arm/bin:$PATH
 script: make $TEST_SUITE
 env:
-  - TEST_SUITE=satellite/test
-  - TEST_SUITE=sdk/test
-matrix:
-  fast_finish: true
-  include:
-  - name: Satellite test
-    env: TEST_SUITE=satellite/test
-  - name: SDK
-    env: TEST_SUITE=sdk/test
+- TEST_SUITE=satellite/test
+- TEST_SUITE=sdk/test
 jobs:
   if: branch = travis-ci
   include:
   - stage: deploy
-    name: "Building Stuffs"
+    name: Building Stuffs
     if: type = push
     env: TEST_SUITE=deploy/test
     script: ifconfig
@@ -46,12 +38,10 @@ notifications:
     on_start: always
     on_cancel: always
     on_error: always
-  slack: $slacky
-#    secure: OPj+OJ7X7cpLVb2I9or4WXl+mr+LsvGWIDTDCU8rmn8rKs+24glRMVDYCdSMFz25nDwEn+/CU/F0cLQtMDQm58Dv9Vaq01l0KTettPyPWBmqog+Koi+ICs89fUJkDQz+LNNjZGaoT0ZYXUGyvCd9MYopTGmyoFEQ7PV8/spUshe9T7HdKy3J4U45YX2E4xpuqqXBZ+DRX3/fQuSEneNi4NUHGqQOqSnOnuWog35/cj8cbvqusEK0MGXp6svDq5x8UZNJ15tlalR3u3vXXkyomRsHDzYrIbEz5lVe8V04L3UJRD5uCG00TrI+otsNtSl3bVHJTxH1UBj6jdMp0/TmvpQBjALZ6FbUTYdmmN+Y6wI9VfMc8RtP6kMnyD0xZ5Er/RiN2F8elnABLCyyNDuGhryHAT1ALLYs6iFCSSQ9iFTPXSw4USKL2NKnKX/2y/8wgLTtRxcToBbCewy67tALFkf+Fgm89nAtkk3isuRAeSkYt6a2XouE3Au5Pm5QOOXYUCP6WYZaoJ88aaelva5KF7u5wvs2uJXzoelVmVO/gQdINpuIjRkQkaeSZRYONjVVRc82M5USpGNKisQ2rd/lreV3By7BnyohZ09DI3iWD+w5OKA+hQc8jVZSbgBq6GAfaliRCHL/vgYrm0rny5RAvoKHNG6q0aawP3GaKEL7oqo=
+  slack:
+    secure: eNX2TvooEww0VXGzl37bCukl/O2CQNS6Nk5kjxftaUigibFsDGR9bizPMmuBEHkSvwPcrrwT51x5/+rAdW1JR2U9megZViHHMlvJBJvMGL6BGZE53viyb4MSQ90/JGPn7tjGACUcdF0e1kpfysLMHy09isD+RZ7Cq1FHDDxZX8KL4OB/4P/rb0wos2FPlkImSHZbKaD3FiPI6sPaAS9tD4Y0nfNmQOJhTNuhrPxrR/HrQoPeDv17j/fgQUjGCwHy0KwVqu88SMHpCqboLcT1uxqlpHXf0a8EbEqU7cQyVLjhOZWZNsPR9JiSXWsD52jBDB8iIpDT3Ol2Qx/L3XbiSHr8ObCoglJKdppQbrCG3Gtiewo+SpfE9izqGVqKMku/3rXbMNQGdAOQmFSXvzjrrob4F1mkurbygQT+cvTKRmmnJ+mWe6kOP6wkj6vsGWDQ2/Hdpn1ayBX9BOOHWslk1oP4JHdHlE1xSqXhfn4zSs2HFZmdoHHLOi3TBuKFxIUi2WYxNgbuf12JD9UqTQYBui22y0DUzGEpwK8xUTDYf3xnOG8tJZie8Ug7Wvz0o8+MC2ehY7ZMi/u/bVoAs4qpy/GrsGS05s3NlSDbd0ervI220rPOTJbVUzHD9tAkgqxgd9Wb2SVzZP4k92gB93/S68J8mzc/EbMGNaIm+NNme60=
   on_success: always
   on_failure: always
   on_start: always
   on_cancel: always
   on_error: always
-
-    
