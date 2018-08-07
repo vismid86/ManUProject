@@ -21,6 +21,13 @@ script: make $TEST_SUITE
 env:
   - TEST_SUITE=satellite/test
   - TEST_SUITE=sdk/test
+matrix:
+  fast_finish: true
+  include:
+  - name: Satellite test
+    env: TEST_SUITE=satellite/test
+  - name: SDK
+    env: TEST_SUITE=sdk/test
 jobs:
   if: branch = travis-ci
   include:
