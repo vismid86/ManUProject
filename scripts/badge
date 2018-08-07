@@ -1,0 +1,41 @@
+#!/bin/bash
+
+## Process test output and writes a
+## results badge to stdout
+
+TESTOUTPUTFILE=$(mktemp)
+while read line
+do
+    echo $line >> $TESTOUTPUTFILE
+done
+
+TESTSRUN=$(cat $TESTOUTPUTFILE | grep -c "Myriota test:")
+TESTSPASSED=$(cat $TESTOUTPUTFILE | grep "Myriota test:" | grep -c "... pass")
+TESTSFAILED=$(cat $TESTOUTPUTFILE | grep "Myriota test:" | grep -c "... FAIL")
+TESTSSKIPPED=$(cat $TESTOUTPUTFILE | grep "Myriota test:" | grep -c "... SKIP")
+TESTSTARTED=$(cat $TESTOUTPUTFILE | grep -c "Myriota test target started:")
+TESTFINISHED=$(cat $TESTOUTPUTFILE | grep -c "Myriota test target stopped:")
+
+badgename=${1:-Test}
+: ${BADGE_NAME:=$badgename}
+
+## Generate a test badge
+BADGESTRING="${BADGE_NAME}-${TESTSPASSED}%2F${TESTSRUN}%20passed"
+if [ "$TESTSFAILED" -ne "0" ]; then
+    BADGESTRING="${BADGESTRING}%20${TESTSFAILED}%2F${TESTSRUN}%20failed"
+fi
+if [ "$TESTSSKIPPED" -ne "0" ]; then
+    BADGESTRING="${BADGESTRING}%20${TESTSSKIPPED}%2F${TESTSRUN}%20skipped"
+fi
+
+if [ "${TESTSTARTED}" -gt "${TESTFINISHED}" ]; then
+    curl -s "https://img.shields.io/badge/${BADGESTRING}-orange.svg"
+elif [ "${TESTSFAILED}" -eq 0 -a "${TESTSPASSED}" -eq 0 ]; then
+    curl -s "https://img.shields.io/badge/${BADGESTRING}-orange.svg"
+elif [ "${TESTSFAILED}" -ne 0 ]; then
+    curl -s "https://img.shields.io/badge/${BADGESTRING}-red.svg"
+elif [ "${TESTSSKIPPED}" -ne 0 ]; then
+    curl -s "https://img.shields.io/badge/${BADGESTRING}-yellowgreen.svg"
+else
+    curl -s "https://img.shields.io/badge/${BADGESTRING}-brightgreen.svg"
+fi

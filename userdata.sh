@@ -1,3 +1,4 @@
+#!/bin/bash -x
 ##  Copyright 2017
 ##  Myriota Pty Ltd
 ##  Myriota Confidential
@@ -21,7 +22,7 @@ update_test_results() {
 
     # combine test logs and generate badge
     local testlogs=$(find $testfolder -name myriota_build.log | tr '\n' ' ')
-    cat $testlogs $(mktemp) | tee $testlog | myriotatest/badge $testfolder > $badge
+    cat $testlogs $(mktemp) | tee $testlog | scripts/badge $testfolder > $badge
 
     # copy badge and logs
     aws s3 cp $badge s3://com.myriota.static-http/test/$repository/$branch/$testfolder/test/badge.svg $badge_args
@@ -44,13 +45,13 @@ commit_badge() {
 update_results() {
     commit_badge $1 $2
     update_test_results "commslib"
-    update_test_results "math"
-    update_test_results "satellite"
-    update_test_results "devops"
-    update_test_results "tools"
-    update_test_results "sdk"
-    update_test_results "apps"
-    update_test_results "terminal"
+#    update_test_results "math"
+#    update_test_results "satellite"
+#    update_test_results "devops"
+#    update_test_results "tools"
+#    update_test_results "sdk"
+#    update_test_results "apps"
+#    update_test_results "terminal"
 }
 
 # die if taking too long

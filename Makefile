@@ -26,9 +26,8 @@ userdatascript:=$(shell mktemp)
 
 # Create user data script and launch test instance
 test: $(userdatascript) .FORCE
-	sh userdata.sh
-	./markdown_badge_links
-
+	./userdata.sh
+	
 # Run script locally
 #local: $(userdatascript) .FORCE
 #	printf "\nGithub badge links:"
