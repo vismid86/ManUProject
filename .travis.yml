@@ -15,11 +15,30 @@ before_install:
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
 install:
-#- sh install-apt-r.sh
+- sh install-apt-r.sh
 - PATH=/opt/gcc-arm/bin:$PATH
-script: 
-  - cd blinky
-  - make
+script: make $TEST_SUITE
+matrix:
+  fast_finish: true
+  include:
+  - name: Satellite test
+    env: TEST_SUITE=satellite/test
+  - name: SDK
+    env: TEST_SUITE=sdk/test
+jobs:
+  if: branch = travis-ci
+  include:
+  - stage: build
+    if: type = push
+    script:
+    - echo "build stage"
+    - ifconfig
+  - stage: release
+    if: type = push
+    script:
+    - echo "release stage"
+    - cd blinky
+    - make
 notifications:
   email:
     recipients:
