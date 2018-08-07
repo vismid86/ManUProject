@@ -23,15 +23,24 @@ before_install:
 - sh install-apt-r.sh
 install:
 - PATH=/opt/gcc-arm/bin:$PATH
-env: 
-  - TEST_SUITE=-j3 terminal/test
-  - TEST_SUITE=-j2 sdk/test
-  - TEST_SUITE=commslib/test
-  - TEST_SUITE=satellite/test
-  - TEST_SUITE=-j3 tools/test
-  - TEST_SUITE=apps/test
-  - TEST_SUITE=math/test
-script: make $TEST_SUITE
+matrix:
+  fast_finish: true
+  if: branch = travis-ci
+  include:
+  - name: Terminal Test
+    script: make -j3 terminal/test
+  - name: SDK Test
+    script: make -j2 sdk/test
+  - name: Commslib Test
+    script: make commslib/test
+  - name: Satellite Test
+    script: make satellite/test
+  - name: Tools Test
+    script: make -j3 tools/test
+  - name: Apps Test
+    script: make  apps/test
+  - name: Math   Test
+    script: make  math/test
 after_script: 
   - ./userdata.sh
 #addons:
