@@ -3,9 +3,8 @@ MAINTAINER vismid
 
 # Install
 RUN apt-get update
-#RUN mkdir -p /src/
-#RUN mkdir -p /src/build/
-#WORKDIR /src/build/
+RUN mkdir -p /CI-test
+WORKDIR /CI-test
 
 #COPY . /src/build
 

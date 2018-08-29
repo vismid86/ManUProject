@@ -16,12 +16,9 @@ language:
 - python
   
 before_install:
-- docker pull ubuntu:16.04
-- docker build .
-- chmod +x install-apt.sh
-- tr -d '\r' < install-apt.sh > install-apt-r.sh
-- chmod +x install-apt-r.sh
-- sh install-apt-r.sh
+- docker build . --tag 16.04-travis
+- docker run -d 16.04-travis /bin/sh -c "cd CI-test; ./install-apt.sh"
+- docker ps -a
 install:
 - PATH=/opt/gcc-arm/bin:$PATH
 matrix:
@@ -33,6 +30,7 @@ matrix:
       - ifconfig
       - uname -a
       - docker ps -a
+      - lsb_release -a
 after_script: 
   - ./userdata.sh
 #addons:
