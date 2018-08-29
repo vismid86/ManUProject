@@ -14,6 +14,7 @@ cache:
 language:
 - c
 - python
+  
 before_install:
 - docker pull ubuntu:16.04
 - docker build .
@@ -28,19 +29,10 @@ matrix:
   if: branch = travis-ci
   include:
   - name: Terminal Test
-    script: make -j3 terminal/test
-  - name: SDK Test
-    script: make -j2 sdk/test
-  - name: Commslib Test
-    script: make commslib/test
-  - name: Satellite Test
-    script: make satellite/test
-  - name: Tools Test
-    script: make -j3 tools/test
-  - name: Apps Test
-    script: make  apps/test
-  - name: Math   Test
-    script: make  math/test
+    script: 
+      - ifconfig
+      - uname -a
+      - docker ps -a
 after_script: 
   - ./userdata.sh
 #addons:
