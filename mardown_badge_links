@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Generates image links in markdown format that link to the test badges and results for tests of a particular repository/branch.
+# ./markdown_badge_links
+# Will generate links for the current branch. The branch and repository can be set manually using the BRANCH and REPOSITORY environment variables.
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+tracking=$(git rev-parse --abbrev-ref --symbolic-full-name @{u})
+remote=$(dirname "${tracking}")
+repo=$(git remote get-url "${remote}")
+commit=$(git rev-parse --short HEAD)
+
+: ${BRANCH:=$branch}
+: ${REPOSITORY:=$repo}
+
+echo "BRANCH=${BRANCH}" 1>&2
+echo "REPOSITORY=${REPOSITORY}" 1>&2
+
+echo "[![commslib](https://static.myriota.com/test/$REPOSITORY/$BRANCH/commslib/test/badge.svg)](https://test-logs.myriota.com/?log=$REPOSITORY/$BRANCH/commslib/test/myriota_test.log)"
+echo "[![math](https://static.myriota.com/test/$REPOSITORY/$BRANCH/math/test/badge.svg)](https://test-logs.myriota.com/?log=$REPOSITORY/$BRANCH/math/test/myriota_test.log)"
+echo "[![satellite](https://static.myriota.com/test/$REPOSITORY/$BRANCH/satellite/test/badge.svg)](https://test-logs.myriota.com/?log=$REPOSITORY/$BRANCH/satellite/test/myriota_test.log)"
+echo "[![devops](https://static.myriota.com/test/$REPOSITORY/$BRANCH/devops/test/badge.svg)](https://test-logs.myriota.com/?log=$REPOSITORY/$BRANCH/devops/test/myriota_test.log)"
+echo "[![tools](https://static.myriota.com/test/$REPOSITORY/$BRANCH/tools/test/badge.svg)](https://test-logs.myriota.com/?log=$REPOSITORY/$BRANCH/tools/test/myriota_test.log)"
+echo "[![terminal](https://static.myriota.com/test/$REPOSITORY/$BRANCH/terminal/test/badge.svg)](https://test-logs.myriota.com/?log=$REPOSITORY/$BRANCH/terminal/test/myriota_test.log)"
+echo "[![sdk](https://static.myriota.com/test/$REPOSITORY/$BRANCH/sdk/test/badge.svg)](https://test-logs.myriota.com/?log=$REPOSITORY/$BRANCH/sdk/test/myriota_test.log)"
+echo "[![apps](https://static.myriota.com/test/$REPOSITORY/$BRANCH/apps/test/badge.svg)](https://test-logs.myriota.com/?log=$REPOSITORY/$BRANCH/apps/test/myriota_test.log)"
+echo "[![testlog](https://static.myriota.com/test/$REPOSITORY/$BRANCH/commit.svg)](https://test-logs.myriota.com/?log=$REPOSITORY/$BRANCH/script.log)"
