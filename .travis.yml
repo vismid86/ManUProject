@@ -21,8 +21,9 @@ before_install:
 - chmod +x install-apt-r.sh
 - chmod +x install-test.sh
 - docker build . --tag 16.04-travis
-- docker run -it -v `pwd`:/CI-test 16.04-travis /bin/sh -c "./install-apt-r.sh; PATH=/opt/gcc-arm/bin:$PATH; ./install-test.sh"
+- docker run -d -v `pwd`:/CI-test 16.04-travis /bin/sh -c "./install-apt-r.sh; PATH=/opt/gcc-arm/bin:$PATH"
 - docker ps -a
+- docker exec -it 16.04-travis /bin/sh -c "./install-test.sh"
 install:
 - PATH=/opt/gcc-arm/bin:$PATH
 matrix:
@@ -31,12 +32,12 @@ matrix:
   include:
   - name: Terminal Test
     script:
-      - ifconfig
-      - uname -a
-      - docker ps -a
-      - lsb_release -a
+      - docker exec -it 16.04-travis /bin/sh -c "ifconfig; uname -a; docker ps -a; lsb_release -a"
+  - name: App Test
+    script:
+      - docker exec -it 16.04-travis /bin/sh -c "./install-test.sh"      
 after_script:
-  - ./userdata.sh
+  - docker exec -it 16.04-travis /bin/sh -c ""./userdata.sh"
 #addons:
 #  artifacts:
     # ...
