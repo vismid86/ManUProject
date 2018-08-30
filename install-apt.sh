@@ -24,6 +24,6 @@ sudo npm install -g npm
 
 # download arm compiler and add to path for this session
 curl -OL https://developer.arm.com/-/media/Files/downloads/gnu-rm/7-2017q4/gcc-arm-none-eabi-7-2017-q4-major-linux.tar.bz2
-sudo mkdir /opt/gcc-arm
+sudo mkdir -p /opt/gcc-arm
 sudo tar -xjvf gcc-arm-none-eabi-7-2017-q4-major-linux.tar.bz2 -C /opt/gcc-arm --strip-components=1
 echo "The ARM compiler at /opt/gcc-arm/bin needs to be added to the PATH to be used."
