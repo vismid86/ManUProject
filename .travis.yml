@@ -17,7 +17,7 @@ language:
 
 before_install:
 - docker build . --tag 16.04-travis
-- docker run -v `pwd`:/CI-test -d 16.04-travis --rm 16.04-travis /bin/sh -c "./install-apt.sh"
+- docker run -v `pwd`:/CI-test 16.04-travis bash -c "./install-apt.sh"
 - docker ps -a
 install:
 - PATH=/opt/gcc-arm/bin:$PATH
