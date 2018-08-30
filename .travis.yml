@@ -18,6 +18,8 @@ language:
 before_install:
 - chmod +x install-apt.sh
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
+- chmod +x install-apt-r.sh
+- chmod +x install-test.sh
 - docker build . --tag 16.04-travis
 - docker run -it -v `pwd`:/CI-test 16.04-travis /bin/sh -c "./install-apt-r.sh; ./install-test.sh"
 - docker ps -a
