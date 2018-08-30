@@ -24,9 +24,9 @@ before_install:
 - docker build . --tag travis:16.04
 - docker run --name travis-cont -dit -v `pwd`:/CI-test travis:16.04
 - docker exec travis-cont /bin/sh -c "./install-apt-r.sh"
-- docker exec travis-cont bash -c PATH=/opt/gcc-arm/bin:$PATH
+- docker exec travis-cont bash -c "PATH=/opt/gcc-arm/bin:$PATH"
 - docker ps -a
-- docker exec travis-cont /bin/sh -c "./install-test.sh; cd /opt/gcc-arm; ls -lrt"
+- docker exec travis-cont /bin/sh -c "./install-test.sh; echo $PATH; cd /opt/gcc-arm; ls -lrt"
 - docker commit travis-cont myriota-travis:16.04
 - docker images
 install:
@@ -43,7 +43,7 @@ matrix:
       - docker run --name myriota-cont -dit -v `pwd`:/CI-test myriota-travis:16.04
       - docker exec myriota-cont /bin/sh -c "./install-test.sh"
 after_script:
-  - docker exec myriota-cont /bin/sh -c "./userdata.sh"
+  - docker exec travis-cont /bin/sh -c "./userdata.sh"
 #addons:
 #  artifacts:
     # ...
