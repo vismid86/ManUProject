@@ -21,7 +21,7 @@ before_install:
 - chmod +x install-apt-r.sh
 - chmod +x install-test.sh
 - docker build . --tag 16.04-travis
-- docker run -d -v `pwd`:/CI-test 16.04-travis --name travis-cont
+- docker run --name travis-cont -d -v `pwd`:/CI-test 16.04-travis pwd
 - docker exec -it travis-cont /bin/sh -c "./install-apt-r.sh; PATH=/opt/gcc-arm/bin:$PATH"
 - docker ps -a
 - docker exec -it 16.04-travis /bin/sh -c "./install-test.sh"
