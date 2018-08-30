@@ -20,11 +20,14 @@ before_install:
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
 - chmod +x install-test.sh
-- docker build . --tag 16.04-travis
-- docker run --name travis-cont -d -v `pwd`:/CI-test 16.04-travis pwd
-- docker exec -it travis-cont /bin/sh -c "./install-apt-r.sh; PATH=/opt/gcc-arm/bin:$PATH"
+- docker --version
+- docker build . --tag travis:16.04
+- docker run --name travis-cont -dit -v `pwd`:/CI-test travis:16.04
+- docker exec travis-cont /bin/sh -c "./install-apt-r.sh; PATH=/opt/gcc-arm/bin:$PATH"
 - docker ps -a
-- docker exec -it 16.04-travis /bin/sh -c "./install-test.sh"
+- docker exec travis-cont /bin/sh -c "./install-test.sh"
+- docker commit travis-cont myriota-travis:16.04
+- docker images
 install:
 - pwd
 matrix:
@@ -33,12 +36,13 @@ matrix:
   include:
   - name: Terminal Test
     script:
-      - docker exec -it travis-cont /bin/sh -c "ifconfig; uname -a; docker ps -a; lsb_release -a"
+      - docker exec travis-cont /bin/sh -c "ifconfig; uname -a; docker ps -a; lsb_release -a"
   - name: App Test
     script:
-      - docker exec -it travis-cont /bin/sh -c "./install-test.sh"
+      - docker run --name myriota-cont -dit myriota-travis:16.04
+      - docker exec myriota-cont /bin/sh -c "./install-test.sh"
 after_script:
-  - docker exec -it travis-cont /bin/sh -c ""./userdata.sh"
+  - docker exec myriota-cont /bin/sh -c ""./userdata.sh"
 #addons:
 #  artifacts:
     # ...
