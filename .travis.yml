@@ -18,9 +18,10 @@ language:
 env:
   global:
     - DOCKER_CONTAINER_NAME=travis-cont
-    - DOCKER_BUILD_NAME=travis:16.04
-    - DOCKER_COMMIT_IMAGE=myriota-travis:16.04
+    - DOCKER_BUILD_NAME=travis
+    - DOCKER_COMMIT_IMAGE=myriota-travis
     - DOCKER_REPO=finalbuild
+    - DOCKER_TAG=16.04
 
 before_install:
 - chmod +x install-apt.sh
@@ -28,19 +29,22 @@ before_install:
 - chmod +x install-apt-r.sh
 - chmod +x install-test.sh
 - docker --version
-- docker build . --tag "${DOCKER_BUILD_NAME}"
-- docker run --name "${DOCKER_CONTAINER_NAME}" -dit -v `pwd`:/CI-test "${DOCKER_BUILD_NAME}"
+- docker build . --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
+- docker run --name "${DOCKER_CONTAINER_NAME}" -dit -v `pwd`:/CI-test "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
 - docker exec "${DOCKER_CONTAINER_NAME}" bash -c 'export PATH=/opt/gcc-arm/bin:$PATH'
 - docker ps -a
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-test.sh; echo $PATH; cd /opt/gcc-arm; ls -lrt'
-- docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}"
+- docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 - docker images
+- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$DOCKERUSER/${DOCKER_REPO}"
  # Login to DockerHub
 - echo $DOCKERPASS | docker login -u $DOCKERUSER --password-stdin
 - docker push $DOCKERUSER/${DOCKER_REPO}
 install:
 - pwd
+
+# Working Matrix Starts
 matrix:
   fast_finish: true
   if: branch = travis-ci
@@ -57,6 +61,8 @@ matrix:
       - docker exec myriota-cont /bin/sh -c './install-test.sh'
 after_script:
   - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './userdata.sh'
+# Working MAtrix ends
+
 #addons:
 #  artifacts:
     # ...
