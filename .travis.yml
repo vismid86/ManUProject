@@ -20,6 +20,7 @@ env:
     - DOCKER_CONTAINER_NAME=travis-cont
     - DOCKER_BUILD_NAME=travis:16.04
     - DOCKER_COMMIT_IMAGE=myriota-travis:16.04
+    - DOCKER_REPO=finalbuild
 
 before_install:
 - chmod +x install-apt.sh
@@ -27,17 +28,17 @@ before_install:
 - chmod +x install-apt-r.sh
 - chmod +x install-test.sh
 - docker --version
-- docker build . --tag "{DOCKER_BUILD_NAME}"
-- docker run --name "{DOCKER_CONTAINER_NAME}" -dit -v `pwd`:/CI-test "{DOCKER_BUILD_NAME}"
-- docker exec "{DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
-- docker exec "{DOCKER_CONTAINER_NAME}" bash -c 'export PATH=/opt/gcc-arm/bin:$PATH'
+- docker build . --tag "${DOCKER_BUILD_NAME}"
+- docker run --name "${DOCKER_CONTAINER_NAME}" -dit -v `pwd`:/CI-test "${DOCKER_BUILD_NAME}"
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
+- docker exec "${DOCKER_CONTAINER_NAME}" bash -c 'export PATH=/opt/gcc-arm/bin:$PATH'
 - docker ps -a
-- docker exec "{DOCKER_CONTAINER_NAME}" /bin/sh -c './install-test.sh; echo $PATH; cd /opt/gcc-arm; ls -lrt'
-- docker commit "{DOCKER_CONTAINER_NAME}"  "{DOCKER_COMMIT_IMAGE}"
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-test.sh; echo $PATH; cd /opt/gcc-arm; ls -lrt'
+- docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}"
 - docker images
  # Login to DockerHub
 - echo $DOCKERPASS | docker login -u $DOCKERUSER --password-stdin
-- docker push vismid86/finalbuild
+- docker push $DOCKERUSER/${DOCKER_REPO}
 install:
 - pwd
 matrix:
@@ -46,7 +47,7 @@ matrix:
   include:
   - name: Terminal Test
     script:
-      - docker exec "{DOCKER_CONTAINER_NAME}" /bin/sh -c 'uname -a; lsb_release -a'
+      - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'uname -a; lsb_release -a'
   - name: App Test
     before_install:
       - docker images
@@ -55,7 +56,7 @@ matrix:
       - docker run --name myriota-cont -dit -v `pwd`:/CI-test myriota-travis:16.04
       - docker exec myriota-cont /bin/sh -c './install-test.sh'
 after_script:
-  - docker exec "{DOCKER_CONTAINER_NAME}" /bin/sh -c './userdata.sh'
+  - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './userdata.sh'
 #addons:
 #  artifacts:
     # ...
