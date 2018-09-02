@@ -35,7 +35,7 @@ before_install:
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
 - docker exec "${DOCKER_CONTAINER_NAME}" bash -c 'PATH="/opt/gcc-arm/bin:$PATH" >> ~/.bashrc; echo $PATH'
 - docker restart ${DOCKER_CONTAINER_NAME}
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-test.sh; echo $PATH;'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'export PATH=/opt/gcc-arm/bin:$PATH; ./install-test.sh; echo $PATH;'
 - docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 - docker images
 - docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$DOCKERUSER/${DOCKER_REPO}"
@@ -63,7 +63,7 @@ matrix:
       - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'uname -a; lsb_release -a; ./install-test.sh'
       - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'echo "Finished successfully"'
     after_script:
-      - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'exho "Coming in After script stage"'
+      - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'echo "Coming in After script stage"'
 
 after_script:
   - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './userdata.sh'
