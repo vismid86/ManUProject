@@ -59,7 +59,7 @@ matrix:
       - ifconfig
       - docker pull $DOCKERUSER/${DOCKER_REPO}:latest
     script:
-      - docker run --name ${DOCKER_TEST_CONTAINER} -dit -v `pwd`:CI-test ${DOCKERUSER}/${DOCKER_REPO}:latest
+      - docker run --name ${DOCKER_TEST_CONTAINER} -dit -v `pwd`:`pwd` ${DOCKERUSER}/${DOCKER_REPO}:latest
       - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'uname -a; lsb_release -a; ./install-test.sh'
       - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'echo "Finished successfully"'
     after_script:
