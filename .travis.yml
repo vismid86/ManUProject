@@ -31,10 +31,10 @@ before_install:
 - chmod +x install-test.sh
 - docker --version
 - docker build . --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
-- docker run --name "${DOCKER_CONTAINER_NAME}" -dit -v `pwd`:/CI-test "${DOCKER_BUILD_NAME}:${DOCKER_TAG}" bash -c './install-apt-r.sh; PATH=/opt/gcc-arm/bin:$PATH'
-#- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
-#- docker exec "${DOCKER_CONTAINER_NAME}" bash -c 'PATH=/opt/gcc-arm/bin:$PATH'
-- docker ps -a
+- docker run --name "${DOCKER_CONTAINER_NAME}" -dit -v `pwd`:/CI-test "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
+- docker exec "${DOCKER_CONTAINER_NAME}" bash -c 'PATH=/opt/gcc-arm/bin:$PATH >> ~/.bashrc'
+- docker restart ${DOCKER_CONTAINER_NAME}
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-test.sh; echo $PATH; cd /opt/gcc-arm; ls -lrt'
 - docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 - docker images
