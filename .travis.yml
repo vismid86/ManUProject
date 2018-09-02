@@ -22,6 +22,7 @@ env:
     - DOCKER_COMMIT_IMAGE=myriota-travis
     - DOCKER_REPO=finalbuild
     - DOCKER_TAG=16.04
+    - DOCKER_TEST_CONTAINER=myriota-test
 
 before_install:
 - chmod +x install-apt.sh
@@ -30,9 +31,9 @@ before_install:
 - chmod +x install-test.sh
 - docker --version
 - docker build . --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
-- docker run --name "${DOCKER_CONTAINER_NAME}" -dit -v `pwd`:/CI-test "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
-- docker exec "${DOCKER_CONTAINER_NAME}" bash -c 'PATH=/opt/gcc-arm/bin:$PATH'
+- docker run --name "${DOCKER_CONTAINER_NAME}" -dit -v `pwd`:/CI-test "${DOCKER_BUILD_NAME}:${DOCKER_TAG} bash -c './install-apt-r.sh; PATH=/opt/gcc-arm/bin:$PATH'"
+#- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
+#- docker exec "${DOCKER_CONTAINER_NAME}" bash -c 'PATH=/opt/gcc-arm/bin:$PATH'
 - docker ps -a
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-test.sh; echo $PATH; cd /opt/gcc-arm; ls -lrt'
 - docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
@@ -56,9 +57,14 @@ matrix:
     before_install:
       - docker images
       - ifconfig
+      - docker pull $DOCKERUSER/${DOCKER_REPO}:latest
     script:
-      - docker run --name myriota-cont -dit -v `pwd`:/CI-test myriota-travis:16.04
-      - docker exec myriota-cont /bin/sh -c './install-test.sh'
+      - docker run --name ${DOCKER_TEST_CONTAINER} -dit -v `pwd`:{WORK_DIR} ${DOCKERUSER}/${DOCKER_REPO}:latest
+      - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'uname -a; lsb_release -a; ./install-test.sh'
+      - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'echo "Finished successfully"'
+    after_script:
+      - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'exho "Coming in After script stage"'
+
 after_script:
   - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './userdata.sh'
 # Working MAtrix ends
