@@ -1,0 +1,92 @@
+dist: xenial
+sudo: required
+services:
+- docker
+branches:
+  only:
+  - travis-ci
+cache:
+  ccache: true
+  pip: true
+  directories:
+    - dpdk
+    - node_modules
+language:
+- c
+- python
+
+env:
+  global:
+    - DOCKER_CONTAINER_NAME=travis-cont
+    - DOCKER_BUILD_NAME=travis
+    - DOCKER_COMMIT_IMAGE=myriota-travis
+    - DOCKER_REPO=finalbuild
+    - DOCKER_TAG=16.04
+    - DOCKER_TEST_CONTAINER=myriota-test
+    - DOCKER_WORK_DIR=/tmp
+
+before_install:
+- chmod +x install-apt.sh
+- tr -d '\r' < install-apt.sh > install-apt-r.sh
+- chmod +x install-apt-r.sh
+- chmod +x install-test.sh
+- docker --version
+- docker build . --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
+- docker run --name "${DOCKER_CONTAINER_NAME}" -dit -v `pwd`:/CI-test "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
+- docker exec "${DOCKER_CONTAINER_NAME}" bash -c 'PATH=/opt/gcc-arm/bin:$PATH; echo $PATH'
+- docker restart ${DOCKER_CONTAINER_NAME}
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'export PATH=/opt/gcc-arm/bin:$PATH; ./install-test.sh; echo $PATH;'
+- docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
+- docker images
+- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$DOCKERUSER/${DOCKER_REPO}"
+ # Login to DockerHub
+- echo $DOCKERPASS | docker login -u $DOCKERUSER --password-stdin
+- docker push $DOCKERUSER/${DOCKER_REPO}
+
+# Working Matrix Starts
+matrix:
+  fast_finish: true
+  if: branch = travis-ci
+  include:
+  - name: Terminal Test
+    script:
+      - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'uname -a; lsb_release -a'
+  - name: App Test
+    before_install:
+      - docker images
+      - docker pull $DOCKERUSER/${DOCKER_REPO}:latest
+    script:
+      - docker run --name ${DOCKER_TEST_CONTAINER} -dit -v `pwd`:${DOCKER_WORK_DIR} ${DOCKERUSER}/${DOCKER_REPO}:latest
+      - docker exec -w ${DOCKER_WORK_DIR} ${DOCKER_TEST_CONTAINER} bash -c 'uname -a; lsb_release -a; ls -lrt; pwd;'
+      - docker exec -w ${DOCKER_WORK_DIR} ${DOCKER_TEST_CONTAINER} /bin/sh -c 'chmod +x install-test.sh; export PATH=/opt/gcc-arm/bin:$PATH; echo $PATH; ./install-test.sh'
+      - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'echo "Finished successfully"'
+    after_script:
+      - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'echo "Coming in After script stage"'
+
+after_script:
+  - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './userdata.sh'
+# Working MAtrix ends
+
+#addons:
+#  artifacts:
+    # ...
+#    paths:
+#    - $(git ls-files -o | tr "\n" ":")
+#    - $(ls /var/log/*.log | tr "\n" ":")
+#    - $HOME/some/other/thing.log
+#    - $(find sdk/test -name myriota_build.log | tr '\n' ':')
+notifications:
+  email:
+    recipients:
+    - vismid89@gmail.com
+    on_pull_requests: false
+    on_success: always
+    on_failure: always
+    on_start: always
+    on_cancel: always
+    on_error: always
+  slack:
+    secure: eNX2TvooEww0VXGzl37bCukl/O2CQNS6Nk5kjxftaUigibFsDGR9bizPMmuBEHkSvwPcrrwT51x5/+rAdW1JR2U9megZViHHMlvJBJvMGL6BGZE53viyb4MSQ90/JGPn7tjGACUcdF0e1kpfysLMHy09isD+RZ7Cq1FHDDxZX8KL4OB/4P/rb0wos2FPlkImSHZbKaD3FiPI6sPaAS9tD4Y0nfNmQOJhTNuhrPxrR/HrQoPeDv17j/fgQUjGCwHy0KwVqu88SMHpCqboLcT1uxqlpHXf0a8EbEqU7cQyVLjhOZWZNsPR9JiSXWsD52jBDB8iIpDT3Ol2Qx/L3XbiSHr8ObCoglJKdppQbrCG3Gtiewo+SpfE9izqGVqKMku/3rXbMNQGdAOQmFSXvzjrrob4F1mkurbygQT+cvTKRmmnJ+mWe6kOP6wkj6vsGWDQ2/Hdpn1ayBX9BOOHWslk1oP4JHdHlE1xSqXhfn4zSs2HFZmdoHHLOi3TBuKFxIUi2WYxNgbuf12JD9UqTQYBui22y0DUzGEpwK8xUTDYf3xnOG8tJZie8Ug7Wvz0o8+MC2ehY7ZMi/u/bVoAs4qpy/GrsGS05s3NlSDbd0ervI220rPOTJbVUzHD9tAkgqxgd9Wb2SVzZP4k92gB93/S68J8mzc/EbMGNaIm+NNme60=
+#    template:
+#      - "Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository_slug}@%{branch} by %{author} %{result} in %{duration}"
