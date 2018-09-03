@@ -16,8 +16,9 @@ language:
 - python
 
 #Move to jobs
-#env:#
-#  global:
+env:
+  global:
+    - DEBIAN_FRONTEND=noninteractive
 #    - GCC_PATH=/opt/gcc-arm/bin:$PATH
 #    - DOCKER_CONTAINER_NAME=travis-cont
 #    - DOCKER_BUILD_NAME=travis:16.04
@@ -70,7 +71,7 @@ jobs:
         - DOCKER_COMMIT_IMAGE=myriota-travis
         - DOCKER_TAG=16.04
         - DOCKER_REPO=travis-xenial
-        - DOCKER_WORK_DIR=/CI-test-xenial
+        - DOCKER_WORK_DIR=/tmp
       # Just a test to go to script stage with condition to execute only for push commits.
       if: type = push
       script:
@@ -85,7 +86,7 @@ jobs:
         - DOCKER_COMMIT_IMAGE=myriota-travis
         - DOCKER_TAG=18.04
         - DOCKER_REPO=travis-bionic
-        - DOCKER_WORK_DIR=/CI-test-bionic
+        - DOCKER_WORK_DIR=/tmp
       # Just a test to go to script stage with condition to execute only for push commits.
       if: type = push
       script:
@@ -95,7 +96,7 @@ jobs:
     - stage: test
       env:
         - DOCKER_REPO=travis-xenial
-        - DOCKER_WORK_DIR:/CI-test-xenial
+        - DOCKER_WORK_DIR=/CI-test-xenial
         - DOCKER_TEST_CONTAINER=testcontainer-xenial
       before_install:
         - docker pull $DOCKERUSER/${DOCKER_REPO}:latest
@@ -105,7 +106,7 @@ jobs:
     - stage: test
       env:
         - DOCKER_REPO=travis-bionic
-        - DOCKER_WORK_DIR:/CI-test-bionic
+        - DOCKER_WORK_DIR=/CI-test-bionic
         - DOCKER_TEST_CONTAINER=testcontainer-bionic
       before_install:
         - docker pull $DOCKERUSER/${DOCKER_REPO}:latest
