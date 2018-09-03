@@ -70,7 +70,7 @@ jobs:
         - DOCKER_COMMIT_IMAGE=myriota-travis
         - DOCKER_TAG=16.04
         - DOCKER_REPO=travis-xenial
-        - DOCKER_WORK_DIR:/CI-test-xenial
+        - DOCKER_WORK_DIR=/CI-test-xenial
       # Just a test to go to script stage with condition to execute only for push commits.
       if: type = push
       script:
@@ -79,13 +79,13 @@ jobs:
 # Build stage for installing packages in 18.04 ubuntu image. Uses before_install and push the finalimage
     - stage: build
       env:
-        - DOCKERFILEPATH=ubuntu18.04
+        - DOCKER_PATH=ubuntu18.04
         - DOCKER_BUILD_NAME=travis
         - DOCKER_CONTAINER_NAME=travis-cont-bionic
         - DOCKER_COMMIT_IMAGE=myriota-travis
         - DOCKER_TAG=18.04
         - DOCKER_REPO=travis-bionic
-        - DOCKER_WORK_DIR:/CI-test-bionic
+        - DOCKER_WORK_DIR=/CI-test-bionic
       # Just a test to go to script stage with condition to execute only for push commits.
       if: type = push
       script:
