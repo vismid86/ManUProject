@@ -98,6 +98,7 @@ jobs:
         - DOCKER_REPO=travis-xenial
         - DOCKER_WORK_DIR=/tmp
         - DOCKER_TEST_CONTAINER=testcontainer-xenial
+        - PATH=/opt/gcc-arm/bin:$PATH
       before_install:
         - echo $DOCKERPASS | docker login -u $DOCKERUSER --password-stdin
         - docker pull $DOCKERUSER/${DOCKER_REPO}:latest
@@ -109,6 +110,7 @@ jobs:
         - DOCKER_REPO=travis-bionic
         - DOCKER_WORK_DIR=/CI-test-xenial
         - DOCKER_TEST_CONTAINER=testcontainer-bionic
+        - PATH=/opt/gcc-arm/bin:$PATH
       before_install:
         - docker pull $DOCKERUSER/${DOCKER_REPO}:latest
       # Calls script stage defined above for tests.
