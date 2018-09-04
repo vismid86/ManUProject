@@ -109,7 +109,7 @@ jobs:
       # Calls after script Cleans containers and image.
 # Test stage to pull the image from repo. Execute tests.
     - stage: test
-      NAME: "Test on Ubuntu18.04"
+      name: "Test on Ubuntu18.04"
       env:
         - DOCKER_REPO=travis-bionic
         - DOCKER_WORK_DIR=/CI-test-bionic
