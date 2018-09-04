@@ -7,7 +7,7 @@ myriota_test() {
     testlog=$(mktemp)
     bash -c "${1}" > testlog 2>&1 && echo "pass" || (echo "FAIL"; cat testlog)
 }
- myriota_test 'which make'
+myriota_test 'which make'
 myriota_test 'which python'
 myriota_test 'which pip'
 myriota_test 'python -c "import serial"'
