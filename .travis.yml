@@ -96,7 +96,7 @@ jobs:
     - stage: test
       env:
         - DOCKER_REPO=travis-xenial
-        - DOCKER_WORK_DIR=/tmp
+        - DOCKER_WORK_DIR=/CI-test-xenial
         - DOCKER_TEST_CONTAINER=testcontainer-xenial
         - PATH=/opt/gcc-arm/bin:$PATH
       before_install:
@@ -108,7 +108,7 @@ jobs:
     - stage: test
       env:
         - DOCKER_REPO=travis-bionic
-        - DOCKER_WORK_DIR=/CI-test-xenial
+        - DOCKER_WORK_DIR=/CI-test-bionic
         - DOCKER_TEST_CONTAINER=testcontainer-bionic
         - PATH=/opt/gcc-arm/bin:$PATH
       before_install:
