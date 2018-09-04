@@ -52,7 +52,7 @@ script:
 - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'echo "Finished successfully"'
 
 #Clean up Containers and image after run
-after script :
+after_script :
 - docker ps -aq
 - docker stop $(docker ps -aq)
 - docker rm $(docker ps -aq)
@@ -64,6 +64,8 @@ jobs:
   include:
 # Build stage for installing packages in 16.04 ubuntu image. Uses before_install and push the finalimage
     - stage: build
+      name: "Build Ubuntu16.04"
+      if: type = push AND commit_message=build
       env:
         - DOCKER_PATH=ubuntu16.04
         - DOCKER_BUILD_NAME=travis
@@ -72,13 +74,14 @@ jobs:
         - DOCKER_TAG=16.04
         - DOCKER_REPO=travis-xenial
         - DOCKER_WORK_DIR=/CI-test-xenial
-      # Just a test to go to script stage with condition to execute only for push commits.
-      if: type = push
+      # Just a test to go to script stage with condition to execute only for push commits
       script:
         - echo "Build stage for 16.04 is Complete and Container is ${DOCKER_CONTAINER_NAME}"
       # Calls after script Cleans containers and image.
 # Build stage for installing packages in 18.04 ubuntu image. Uses before_install and push the finalimage
     - stage: build
+      name: "Build Ubuntu18.04"
+      if: type = push AND commit_message=build
       env:
         - DOCKER_PATH=ubuntu18.04
         - DOCKER_BUILD_NAME=travis
@@ -88,12 +91,12 @@ jobs:
         - DOCKER_REPO=travis-bionic
         - DOCKER_WORK_DIR=/CI-test-bionic
       # Just a test to go to script stage with condition to execute only for push commits.
-      if: type = push
       script:
         - echo "Build stage for 18.04 is Complete and Container is ${DOCKER_CONTAINER_NAME}"
       # Calls after script Cleans containers and image.
 # Test stage to pull the image from repo. Execute tests.
     - stage: test
+      name: "Test on Ubuntu16.04"
       env:
         - DOCKER_REPO=travis-xenial
         - DOCKER_WORK_DIR=/CI-test-xenial
@@ -106,6 +109,7 @@ jobs:
       # Calls after script Cleans containers and image.
 # Test stage to pull the image from repo. Execute tests.
     - stage: test
+      NAME: "Test on Ubuntu18.04"
       env:
         - DOCKER_REPO=travis-bionic
         - DOCKER_WORK_DIR=/CI-test-bionic
