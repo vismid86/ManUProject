@@ -16,9 +16,9 @@ language:
 - python
 
 #Move to jobs
-env:
-  global:
-    - DEBIAN_FRONTEND=noninteractive
+#env:
+#  global:
+#    - DEBIAN_FRONTEND=noninteractive
 #    - GCC_PATH=/opt/gcc-arm/bin:$PATH
 #    - DOCKER_CONTAINER_NAME=travis-cont
 #    - DOCKER_BUILD_NAME=travis:16.04
@@ -35,7 +35,7 @@ before_install:
 # New changes
 - docker build -f ${DOCKER_PATH}/Dockerfile --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}" .
 - docker run --name "${DOCKER_CONTAINER_NAME}" -dit -v `pwd`:${DOCKER_WORK_DIR} "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'export DEBIAN_FRONTEND=noninteractive; ./install-apt-r.sh'
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'PATH=/opt/gcc-arm/bin:$PATH; ./install-test.sh; echo $PATH;'
 - docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 - docker images
