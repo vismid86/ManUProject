@@ -2,4 +2,6 @@
 
 #Test file
 newfile=$(mktemp)
-echo "Created newfile"
+echo "Created newfile" >> $newfile
+cat $newfile
+
