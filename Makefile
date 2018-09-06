@@ -26,7 +26,7 @@
 
 # Create user data script and launch test instance
 test: .FORCE
-	./userdata.sh
+	./test.sh
 
 # Run script locally
 #local: $(userdatascript) .FORCE
