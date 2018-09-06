@@ -54,11 +54,13 @@ script:
 
 #Clean up Containers and image after run
 after_script :
-- docker logs
+- docker logs ${DOCKER_TEST_CONTAINER}
 - docker ps -aq
 - docker stop $(docker ps -aq)
 - docker rm $(docker ps -aq)
 - docker rmi $(docker images -q)
+- cat /scripts/testfile
+- cat tmp/tmp.*
 
 jobs:
 # Run if only the branch is travis-ci
@@ -154,6 +156,11 @@ addons:
 #    - $HOME/some/other/thing.log
 #    - $(find sdk/test -name myriota_build.log | tr '\n' ':')
 #    - $(find $testfolder -name myriota_build.log | tr '\n' ' ')
+# s3_region: "us-west-1"
+# ARTIFACTS_KEY=(AWS access key id)
+# ARTIFACTS_SECRET=(AWS secret access key)
+# ARTIFACTS_BUCKET=(S3 bucket name)
+
 notifications:
   email:
     recipients:
