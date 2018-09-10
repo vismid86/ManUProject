@@ -49,6 +49,7 @@ after_script:
 - docker rmi $(docker images -q)
 - pwd; cat scripts/testfile
 - cat /tmp/tmp.*
+- cat ~/.ssh/id_rsa.pub
 - ssh -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${host}
 jobs:
   if: branch = travis-ci
