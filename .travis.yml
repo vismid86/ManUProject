@@ -9,52 +9,38 @@ cache:
   ccache: true
   pip: true
   directories:
-    - dpdk
-    - node_modules
+  - dpdk
+  - node_modules
 language:
 - c
 - python
-
-#Move to jobs
-#env:
-#  global:
-#    - DEBIAN_FRONTEND=noninteractive
-#    - GCC_PATH=/opt/gcc-arm/bin:$PATH
-#    - DOCKER_CONTAINER_NAME=travis-cont
-#    - DOCKER_BUILD_NAME=travis:16.04
-#    - DOCKER_COMMIT_IMAGE=myriota-travis:16.04
-#    - DOCKER_REPO=finalbuild
-
-# Build docker image, Run container, Install packages, Push it to repository
 before_install:
 - chmod +x install-apt.sh
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
 - chmod +x install-test.sh
 - docker --version
-# New changes
-- docker build -f ${DOCKER_PATH}/Dockerfile --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}" .
+- docker build -f ${DOCKER_PATH}/Dockerfile --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
+  .
 - docker run --name "${DOCKER_CONTAINER_NAME}" -dit -v `pwd`:${DOCKER_WORK_DIR} "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'PATH=/opt/gcc-arm/bin:$PATH; ./install-test.sh; echo $PATH;'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'PATH=/opt/gcc-arm/bin:$PATH;
+  ./install-test.sh; echo $PATH;'
 - docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 - docker images
 - docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$DOCKERUSER/${DOCKER_REPO}"
- # Login to DockerHub and Push the image
 - echo $DOCKERPASS | docker login -u $DOCKERUSER --password-stdin
 - docker push $DOCKERUSER/${DOCKER_REPO}
-
-#Script for test stage
 script:
 - echo "Test stage for ${DOCKER_REPO} is Started"
 - docker run --name ${DOCKER_TEST_CONTAINER} -dit -v `pwd`:${DOCKER_WORK_DIR} ${DOCKERUSER}/${DOCKER_REPO}:latest
-- docker exec ${DOCKER_TEST_CONTAINER} /bin/sh -c 'pwd; ls -lrt; echo $PATH; PATH=/opt/gcc-arm/bin:$PATH; ./install-test.sh; echo $PATH'
-- docker exec ${DOCKER_TEST_CONTAINER} bash -c 'touch scripts/testfile; echo "this is a modified file" >> scripts/testfile; make;'
+- docker exec ${DOCKER_TEST_CONTAINER} /bin/sh -c 'pwd; ls -lrt; echo $PATH; PATH=/opt/gcc-arm/bin:$PATH;
+  ./install-test.sh; echo $PATH'
+- docker exec ${DOCKER_TEST_CONTAINER} bash -c 'touch scripts/testfile; echo "this
+  is a modified file" >> scripts/testfile; make;'
 - docker cp $(docker ps -l -q):/tmp /tmp
 - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'echo "Finished successfully"'
-
-#Clean up Containers and image after run
-after_script :
+after_script:
 - docker logs ${DOCKER_TEST_CONTAINER}
 - docker ps -aq
 - docker stop $(docker ps -aq)
@@ -62,106 +48,62 @@ after_script :
 - docker rmi $(docker images -q)
 - pwd; cat scripts/testfile
 - cat /tmp/tmp.*
-
+- ssh -p 9006 ${host}
 jobs:
-# Run if only the branch is travis-ci
   if: branch = travis-ci
   include:
-# Build stage for installing packages in 16.04 ubuntu image. Uses before_install and push the finalimage
-    - stage: build
-      name: "Build Ubuntu16.04"
-      if: type = push AND commit_message=build
-      env:
-        - DOCKER_PATH=ubuntu16.04
-        - DOCKER_BUILD_NAME=travis
-        - DOCKER_CONTAINER_NAME=travis-cont-xenial
-        - DOCKER_COMMIT_IMAGE=myriota-travis
-        - DOCKER_TAG=16.04
-        - DOCKER_REPO=travis-xenial
-        - DOCKER_WORK_DIR=/CI-test-xenial
-      # Just a test to go to script stage with condition to execute only for push commits
-      script:
-        - echo "Build stage for 16.04 is Complete and Container is ${DOCKER_CONTAINER_NAME}"
-      # Calls after script Cleans containers and image.
-# Build stage for installing packages in 18.04 ubuntu image. Uses before_install and push the finalimage
-    - stage: build
-      name: "Build Ubuntu18.04"
-      if: type = push AND commit_message=build
-      env:
-        - DOCKER_PATH=ubuntu18.04
-        - DOCKER_BUILD_NAME=travis
-        - DOCKER_CONTAINER_NAME=travis-cont-bionic
-        - DOCKER_COMMIT_IMAGE=myriota-travis
-        - DOCKER_TAG=18.04
-        - DOCKER_REPO=travis-bionic
-        - DOCKER_WORK_DIR=/CI-test-bionic
-      # Just a test to go to script stage with condition to execute only for push commits.
-      script:
-        - echo "Build stage for 18.04 is Complete and Container is ${DOCKER_CONTAINER_NAME}"
-      # Calls after script Cleans containers and image.
-# Test stage to pull the image from repo. Execute tests.
-    - stage: test
-      name: "Test on Ubuntu16.04"
-      env:
-        - DOCKER_REPO=travis-xenial
-        - DOCKER_WORK_DIR=/CI-test-xenial
-        - DOCKER_TEST_CONTAINER=testcontainer-xenial
-        - PATH=/opt/gcc-arm/bin:$PATH
-      before_install:
-        - echo $DOCKERPASS | docker login -u $DOCKERUSER --password-stdin
-        - docker pull $DOCKERUSER/${DOCKER_REPO}:latest
-      # Calls script stage defined above for tests.
-      # Calls after script Cleans containers and image.
-# Test stage to pull the image from repo. Execute tests.
-    - stage: test
-      name: "Test on Ubuntu18.04"
-      env:
-        - DOCKER_REPO=travis-bionic
-        - DOCKER_WORK_DIR=/CI-test-bionic
-        - DOCKER_TEST_CONTAINER=testcontainer-bionic
-        - PATH=/opt/gcc-arm/bin:$PATH
-      before_install:
-        - docker pull $DOCKERUSER/${DOCKER_REPO}:latest
-      # Calls script stage defined above for tests.
-      # Calls after script Cleans containers and image.
-
-
-# Working Matrix Starts
-#matrix:
-#  fast_finish: true
-#  if: branch = travis-ci
-#  include:
-#  - name: Terminal Test
-#    script:
-#      - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'uname -a; lsb_release -a'
-#  - name: App Test
-#    before_install:
-#      - docker images
-#      - ifconfig
-#    script:
-#      - docker run --name myriota-cont -dit -v `pwd`:/CI-test myriota-travis:16.04
-#      - docker exec myriota-cont /bin/sh -c './install-test.sh'
-#after_script:
-#  - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './userdata.sh'
-# Working MAtrix ends
-
+  - stage: build
+    name: Build Ubuntu16.04
+    if: type = push AND commit_message=build
+    env:
+    - DOCKER_PATH=ubuntu16.04
+    - DOCKER_BUILD_NAME=travis
+    - DOCKER_CONTAINER_NAME=travis-cont-xenial
+    - DOCKER_COMMIT_IMAGE=myriota-travis
+    - DOCKER_TAG=16.04
+    - DOCKER_REPO=travis-xenial
+    - DOCKER_WORK_DIR=/CI-test-xenial
+    script:
+    - echo "Build stage for 16.04 is Complete and Container is ${DOCKER_CONTAINER_NAME}"
+  - stage: build
+    name: Build Ubuntu18.04
+    if: type = push AND commit_message=build
+    env:
+    - DOCKER_PATH=ubuntu18.04
+    - DOCKER_BUILD_NAME=travis
+    - DOCKER_CONTAINER_NAME=travis-cont-bionic
+    - DOCKER_COMMIT_IMAGE=myriota-travis
+    - DOCKER_TAG=18.04
+    - DOCKER_REPO=travis-bionic
+    - DOCKER_WORK_DIR=/CI-test-bionic
+    script:
+    - echo "Build stage for 18.04 is Complete and Container is ${DOCKER_CONTAINER_NAME}"
+  - stage: test
+    name: Test on Ubuntu16.04
+    env:
+    - DOCKER_REPO=travis-xenial
+    - DOCKER_WORK_DIR=/CI-test-xenial
+    - DOCKER_TEST_CONTAINER=testcontainer-xenial
+    - PATH=/opt/gcc-arm/bin:$PATH
+    before_install:
+    - echo $DOCKERPASS | docker login -u $DOCKERUSER --password-stdin
+    - docker pull $DOCKERUSER/${DOCKER_REPO}:latest
+  - stage: test
+    name: Test on Ubuntu18.04
+    env:
+    - DOCKER_REPO=travis-bionic
+    - DOCKER_WORK_DIR=/CI-test-bionic
+    - DOCKER_TEST_CONTAINER=testcontainer-bionic
+    - PATH=/opt/gcc-arm/bin:$PATH
+    before_install:
+    - docker pull $DOCKERUSER/${DOCKER_REPO}:latest
 addons:
   artifacts:
-    # ...
     debug: true
-    working_dir: ${PWD}/blinky
+    working_dir: "${PWD}/blinky"
     paths:
     - $(git ls-files -o | tr "\n" ":")
     - $(ls /tmp/tmp.* | tr "\n" ':')
-#    - $(ls /var/log/*.log | tr "\n" ":")
-#    - $HOME/some/other/thing.log
-#    - $(find sdk/test -name myriota_build.log | tr '\n' ':')
-#    - $(find $testfolder -name myriota_build.log | tr '\n' ' ')
-# s3_region: "us-west-1"
-# ARTIFACTS_KEY=(AWS access key id)
-# ARTIFACTS_SECRET=(AWS secret access key)
-# ARTIFACTS_BUCKET=(S3 bucket name)
-
 notifications:
   email:
     recipients:
@@ -174,5 +116,6 @@ notifications:
     on_error: always
   slack:
     secure: eNX2TvooEww0VXGzl37bCukl/O2CQNS6Nk5kjxftaUigibFsDGR9bizPMmuBEHkSvwPcrrwT51x5/+rAdW1JR2U9megZViHHMlvJBJvMGL6BGZE53viyb4MSQ90/JGPn7tjGACUcdF0e1kpfysLMHy09isD+RZ7Cq1FHDDxZX8KL4OB/4P/rb0wos2FPlkImSHZbKaD3FiPI6sPaAS9tD4Y0nfNmQOJhTNuhrPxrR/HrQoPeDv17j/fgQUjGCwHy0KwVqu88SMHpCqboLcT1uxqlpHXf0a8EbEqU7cQyVLjhOZWZNsPR9JiSXWsD52jBDB8iIpDT3Ol2Qx/L3XbiSHr8ObCoglJKdppQbrCG3Gtiewo+SpfE9izqGVqKMku/3rXbMNQGdAOQmFSXvzjrrob4F1mkurbygQT+cvTKRmmnJ+mWe6kOP6wkj6vsGWDQ2/Hdpn1ayBX9BOOHWslk1oP4JHdHlE1xSqXhfn4zSs2HFZmdoHHLOi3TBuKFxIUi2WYxNgbuf12JD9UqTQYBui22y0DUzGEpwK8xUTDYf3xnOG8tJZie8Ug7Wvz0o8+MC2ehY7ZMi/u/bVoAs4qpy/GrsGS05s3NlSDbd0ervI220rPOTJbVUzHD9tAkgqxgd9Wb2SVzZP4k92gB93/S68J8mzc/EbMGNaIm+NNme60=
-#    template:
-#      - "Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository_slug}@%{branch} by %{author} %{result} in %{duration}"
+env:
+  global:
+    secure: NVagUdBlBZlynoGdj79Kk+gY+avD7AiHq/CAmIgxZk+1wZVa0uVExAuqwKnLKLtHWz+C8BFg05bFURLVt0/7BAEhzCF05f0dWyhEWyg3jL1rGDwqShllZAe1/o2wEreyBUlQ7uRaDUcQQUixn5DoBOT/t+9MTDOSI14xPkntQQoVsxtgJiqO0TLP93tc5RTACkcb5rDegAO+jJJHlSptUD5GCxRBwqnmq7WddAhYqVy840bZy+n1j50efMqMeDEJvCFTyRCvjUTmxts4zmvZTN8tEb7AtuPKIk/onUsAeKyFdFRdzZ7yzwI2MpKAXSOhJfHSQ0kMotKliNfin0I0oloMMnkbXSfkMracmZgboO44Frd6kqFf3DEIFYbDgziSfD5n1CR3I7aTepU1AstW87ojkbZSNxgb6b+9PFCFQCPOLeF+gwYVvnblG6zrrqufNEw4E1LoW/FjpY0CNcoKRONoRRh/1WQOTLuoaQaTotjO9QR6dCx5QJubrKHS7Zlfm5yRwlnvav18QiynLLCF/6PZ/5DFKvqXiKimyJ7t6JBJK3Lr6XHx/nGNIwR+3Dru5cDr+TNLn7T9Z267CoJkZPkCs1GDo/HwEl9r8Q9QO3o2/G+pDiP3GL9S/C7GBOShJaHXAI8S7xRg8I/FNjp7UtL0sOox50I5QPTtJUVJQa8=
