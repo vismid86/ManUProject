@@ -33,10 +33,10 @@ before_install:
 - docker push $DOCKERUSER/${DOCKER_REPO}
 before_script:
 - openssl aes-256-cbc -K $encrypted_35f96cd56ce2_key -iv $encrypted_35f96cd56ce2_iv
-  -in travis_rsa.enc -out ~\/.ssh/travis_rsa -d
+  -in travis_rsa.enc -out ~/.ssh/travis_rsa -d
 - eval "$(ssh-agent -s)"
-- chmod 600 ~\/.ssh/travis_rsa
-- ssh-add ~\/.ssh/travis_rsa
+- chmod 600 ~/.ssh/travis_rsa
+- ssh-add ~/.ssh/travis_rsa
 script:
 - echo "Test stage for ${DOCKER_REPO} is Started"
 - docker run --name ${DOCKER_TEST_CONTAINER} -dit -v `pwd`:${DOCKER_WORK_DIR} ${DOCKERUSER}/${DOCKER_REPO}:latest
@@ -59,7 +59,7 @@ after_script:
 - cat ~/.ssh/id_rsa.pub
 - ssh -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10
   ${host}
-- rm ~\/.ssh/travis_rsa
+- rm ~/.ssh/travis_rsa
 jobs:
   if: branch = travis-ci
   include:
