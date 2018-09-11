@@ -39,11 +39,11 @@ before_script:
 - ssh-add ~/.ssh/travis_rsa
 script:
 - echo "Test stage for ${DOCKER_REPO} is Started"
-- docker run --name ${DOCKER_TEST_CONTAINER} -dit -v `pwd`:${DOCKER_WORK_DIR} -v ~/.ssh:~/.ssh ${DOCKERUSER}/${DOCKER_REPO}:latest
+- docker run --name ${DOCKER_TEST_CONTAINER} -dit -v `pwd`:${DOCKER_WORK_DIR} -v ~/.ssh:/tmp ${DOCKERUSER}/${DOCKER_REPO}:latest
 - docker exec ${DOCKER_TEST_CONTAINER} /bin/sh -c 'pwd; ls -lrt; echo $PATH; PATH=/opt/gcc-arm/bin:$PATH;
   ./install-test.sh; echo $PATH'
 - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'sudo apt-get install openssh'
-- docker exec ${DOCKER_TEST_CONTAINER} bash -c 'eval "$(ssh-agent -s)";ssh-add ~/.ssh/travis_rsa'
+- docker exec ${DOCKER_TEST_CONTAINER} bash -c 'eval "$(ssh-agent -s)";ssh-add /tmp/travis_rsa'
 - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'touch scripts/testfile; echo "this
   is a modified file" >> scripts/testfile; make;'
 - docker cp $(docker ps -l -q):/tmp /tmp
