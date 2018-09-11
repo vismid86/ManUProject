@@ -42,9 +42,9 @@ script:
 - sudo docker run --name ${DOCKER_TEST_CONTAINER} -dit -v `pwd`:${DOCKER_WORK_DIR}
   -v ~/.ssh:/opt -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
   -e AWS_REGION=$AWS_REGION ${DOCKERUSER}/${DOCKER_REPO}:latest
-- sudo docker exec ${DOCKER_TEST_CONTAINER} aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-- sudo docker exec ${DOCKER_TEST_CONTAINER} aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-- sudo docker exec ${DOCKER_TEST_CONTAINER} aws configure set default.region $AWS_REGION
+#- sudo docker exec ${DOCKER_TEST_CONTAINER} aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+#- sudo docker exec ${DOCKER_TEST_CONTAINER} aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+#- sudo docker exec ${DOCKER_TEST_CONTAINER} aws configure set default.region $AWS_REGION
 - docker exec ${DOCKER_TEST_CONTAINER} /bin/sh -c 'pwd; ls -lrt; echo $PATH; PATH=/opt/gcc-arm/bin:$PATH;
   ./install-test.sh; echo $PATH'
 - sudo docker exec ${DOCKER_TEST_CONTAINER} sudo apt-get update; sudo apt-get -y install
