@@ -40,7 +40,7 @@ before_script:
 script:
 - echo "Test stage for ${DOCKER_REPO} is Started"
 - sudo docker run --name ${DOCKER_TEST_CONTAINER} -dit -v `pwd`:${DOCKER_WORK_DIR}
-  -v ~/.ssh:/tmp -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+  -v ~/.ssh:/opt -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
   -e AWS_REGION=$AWS_REGION ${DOCKERUSER}/${DOCKER_REPO}:latest
 - sudo docker exec ${DOCKER_TEST_CONTAINER} aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 - sudo docker exec ${DOCKER_TEST_CONTAINER} aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
@@ -49,13 +49,13 @@ script:
   ./install-test.sh; echo $PATH'
 - sudo docker exec ${DOCKER_TEST_CONTAINER} sudo apt-get update; sudo apt-get -y install
   openssh
-- sudo docker exec ${DOCKER_TEST_CONTAINER} eval "$(ssh-agent -s)";ssh-add /tmp/travis_rsa
+- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'eval "$(ssh-agent -s)";ssh-add /opt/travis_rsa'
 - sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'touch scripts/testfile; echo
   "this is a modified file" >> scripts/testfile; make;'
 - docker cp $(docker ps -l -q):/tmp /tmp
-- docker exec ${DOCKER_TEST_CONTAINER} bash -c 'echo "Finished successfully"'
-- sudo docker exec ${DOCKER_TEST_CONTAINER} ssh -p 9006 -o UserKnownHostsFile=/dev/null
-  -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${host}
+- docker exec ${DOCKER_TEST_CONTAINER} bash -c 'cd /opt; ls -lrt; echo "Finished successfully"'
+- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh -p 9006 -o UserKnownHostsFile=/dev/null
+  -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${host}'
 - sudo docker exec ${DOCKER_TEST_CONTAINER} aws s3 ls
 after_script:
 - docker logs ${DOCKER_TEST_CONTAINER}
@@ -68,6 +68,10 @@ after_script:
 - cat ~/.ssh/id_rsa.pub
 - ssh -p 9006 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10
   ${host} 'sleep 1 && exit'
+- sudo apt-get -y install awscli
+#- aws configure set default.region $AWS_REGION
+#- aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+#- aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 - aws s3 ls
 - rm ~/.ssh/travis_rsa
 jobs:
