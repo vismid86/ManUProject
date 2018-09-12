@@ -48,7 +48,7 @@ script:
 - docker exec ${DOCKER_TEST_CONTAINER} /bin/sh -c 'pwd; ls -lrt; echo $PATH; PATH=/opt/gcc-arm/bin:$PATH;
   ./install-test.sh; echo $PATH'
 - sudo docker exec ${DOCKER_TEST_CONTAINER} sudo apt-get update; sudo apt-get -y install
-  openssh
+  openssh-client
 - sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'eval "$(ssh-agent -s)";ssh-add /opt/travis_rsa'
 - sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'touch scripts/testfile; echo
   "this is a modified file" >> scripts/testfile; make;'
