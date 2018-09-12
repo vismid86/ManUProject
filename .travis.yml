@@ -79,6 +79,15 @@ script:
 #- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh -tt -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'sleep 1 && exit''
 #- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'mv ../keyfile/travis_rsa ~/.ssh/id_rsa; ssh -tt -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'sleep 1 && exit''
 after_script:
+#- cat /tmp/tmp.*
+#- cat ~/.ssh/id_rsa.pub
+- ssh -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10
+  ${host} 'sleep 1 && exit'
+- sudo apt-get update; sudo apt-get -y install awscli
+#- aws configure set default.region $AWS_REGION
+#- aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+#- aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+- aws s3 ls
 - docker logs ${DOCKER_TEST_CONTAINER}
 - docker ps -aq
 - docker stop $(docker ps -aq)
@@ -86,15 +95,6 @@ after_script:
 - docker rmi $(docker images -q)
 - ssh-add -D
 - pwd; cat scripts/testfile
-#- cat /tmp/tmp.*
-#- cat ~/.ssh/id_rsa.pub
-- ssh -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10
-  ${host} 'sleep 1 && exit'
-- sudo apt-get -y install awscli
-#- aws configure set default.region $AWS_REGION
-#- aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-#- aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-- aws s3 ls
 - rm ~/.ssh/travis_rsa
 jobs:
   if: branch = travis-ci
