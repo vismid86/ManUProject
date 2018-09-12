@@ -43,8 +43,8 @@ script:
   sudo docker run --name ${DOCKER_TEST_CONTAINER} -dit
   -v `pwd`:${DOCKER_WORK_DIR}
   -v ~/.ssh:/keyfile
-  -v $SSH_AUTH_SOCK:ssh-agent
-  --env SSH_AUTH_SOCK=ssh-agent
+  -v $SSH_AUTH_SOCK:/ssh-agent
+  --env SSH_AUTH_SOCK=/ssh-agent
   -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
   -e AWS_REGION=$AWS_REGION
