@@ -62,6 +62,7 @@ script:
 - sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh -p 9006 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
 #- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'eval "$(ssh-agent -s)";ssh-add ../keyfile/travis_rsa; ssh -tt -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1 && exit''
 - sudo docker exec ${DOCKER_TEST_CONTAINER} aws s3 ls
+#- aws s3 cp expect.svg s3://com.myriota.static-http/test/travis/expect.svg $badge_args
 #- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh-add -l; ssh-add -D'
 - >-
   sudo docker run --name testcontainer -dit
@@ -135,6 +136,7 @@ jobs:
     - DOCKER_WORK_DIR=/CI-test-xenial
     - DOCKER_TEST_CONTAINER=testcontainer-xenial
     - PATH=/opt/gcc-arm/bin:$PATH
+    - DOCKERUSER=$DOCKERUSER1
     before_install:
     - echo $DOCKERPASS1 | docker login -u $DOCKERUSER1 --password-stdin
     - docker pull $DOCKERUSER1/${DOCKER_REPO}:latest
@@ -145,6 +147,7 @@ jobs:
     - DOCKER_WORK_DIR=/CI-test-bionic
     - DOCKER_TEST_CONTAINER=testcontainer-bionic
     - PATH=/opt/gcc-arm/bin:$PATH
+    - DOCKERUSER=$DOCKERUSER2
     before_install:
     - echo $DOCKERPASS2 | docker login -u $DOCKERUSER2 --password-stdin
     - docker pull $DOCKERUSER2/${DOCKER_REPO}:latest
