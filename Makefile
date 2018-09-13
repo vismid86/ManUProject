@@ -27,6 +27,7 @@
 # Create user data script and launch test instance
 test: .FORCE
 	./test.sh
+	./remotelab.sh
 
 # Run script locally
 #local: $(userdatascript) .FORCE

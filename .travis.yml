@@ -59,7 +59,7 @@ script:
   "this is a modified file" >> scripts/testfile; make;'
 #- docker cp $(docker ps -l -q):/tmp /tmp
 - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'cd ../keyfile; ls -lrt; echo "Finished successfully"'
-- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh -tt -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
+- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
 #- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'eval "$(ssh-agent -s)";ssh-add ../keyfile/travis_rsa; ssh -tt -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1 && exit''
 - sudo docker exec ${DOCKER_TEST_CONTAINER} aws s3 ls
 #- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh-add -l; ssh-add -D'
@@ -73,7 +73,7 @@ script:
   -e AWS_REGION=$AWS_REGION
   -e host=$host
   ${DOCKERUSER}/${DOCKER_REPO}:latest
-- sudo docker exec testcontainer bash -c 'ssh -tt -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
+- sudo docker exec testcontainer bash -c 'ssh -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
 - sudo docker exec testcontainer aws s3 ls
 #- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh -tt -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'sleep 1 && exit''
 #- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'mv ../keyfile/travis_rsa ~/.ssh/id_rsa; ssh -tt -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'sleep 1 && exit''
