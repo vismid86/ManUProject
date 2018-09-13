@@ -56,7 +56,7 @@ script:
 - docker exec ${DOCKER_TEST_CONTAINER} /bin/sh -c 'pwd; ls -lrt; echo $PATH; PATH=/opt/gcc-arm/bin:$PATH;
   ./install-test.sh; echo $PATH'
 - sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'touch scripts/testfile; echo
-  "this is a modified file" >> scripts/testfile; make;test.py'
+  "this is a modified file" >> scripts/testfile; make;./test.py'
 #- docker cp $(docker ps -l -q):/tmp /tmp
 - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'cd ../keyfile; ls -lrt; echo "Finished successfully"'
 - sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh -p 9006 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
