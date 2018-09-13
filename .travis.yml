@@ -109,6 +109,8 @@ jobs:
     - DOCKER_TAG=16.04
     - DOCKER_REPO=travis-xenial
     - DOCKER_WORK_DIR=/CI-test-xenial
+    - DOCKERUSER=$DOCKERUSER1
+    - DOCKERPASS=$DOCKERPASS1
     script:
     - echo "Build stage for 16.04 is Complete and Container is ${DOCKER_CONTAINER_NAME}"
   - stage: build
@@ -122,6 +124,8 @@ jobs:
     - DOCKER_TAG=18.04
     - DOCKER_REPO=travis-bionic
     - DOCKER_WORK_DIR=/CI-test-bionic
+    - DOCKERUSER=$DOCKERUSER2
+    - DOCKERPASS=$DOCKERPASS2
     script:
     - echo "Build stage for 18.04 is Complete and Container is ${DOCKER_CONTAINER_NAME}"
   - stage: test
@@ -132,8 +136,8 @@ jobs:
     - DOCKER_TEST_CONTAINER=testcontainer-xenial
     - PATH=/opt/gcc-arm/bin:$PATH
     before_install:
-    - echo $DOCKERPASS | docker login -u $DOCKERUSER --password-stdin
-    - docker pull $DOCKERUSER/${DOCKER_REPO}:latest
+    - echo $DOCKERPASS1 | docker login -u $DOCKERUSER1 --password-stdin
+    - docker pull $DOCKERUSER1/${DOCKER_REPO}:latest
   - stage: test
     name: Test on Ubuntu18.04
     env:
@@ -142,7 +146,8 @@ jobs:
     - DOCKER_TEST_CONTAINER=testcontainer-bionic
     - PATH=/opt/gcc-arm/bin:$PATH
     before_install:
-    - docker pull $DOCKERUSER/${DOCKER_REPO}:latest
+    - echo $DOCKERPASS2 | docker login -u $DOCKERUSER2 --password-stdin
+    - docker pull $DOCKERUSER2/${DOCKER_REPO}:latest
 addons:
   artifacts:
     debug: true
