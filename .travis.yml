@@ -9,7 +9,6 @@ cache:
   ccache: true
   pip: true
   directories:
-  - dpdk
   - node_modules
 language:
 - c
@@ -64,6 +63,7 @@ after_script:
 - docker stop $(docker ps -aq)
 - docker rm $(docker ps -aq)
 - docker rmi $(docker images -q)
+- uname -a; lsb_release -a; df -h
 - ssh-add -D
 - rm ~/.ssh/travis_rsa
 jobs:
@@ -135,6 +135,7 @@ addons:
   #  paths:
   #  - $(git ls-files -o | tr "\n" ":")
   #  - $(ls /tmp/tmp.* | tr "\n" ':')
+  #  - $(find sdk/test -name myriota_build.log | tr '\n' ':')
 notifications:
   email:
     recipients:
