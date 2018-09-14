@@ -9,7 +9,7 @@ cache:
   ccache: true
   pip: true
   directories:
-  - node_modules
+  - cache_node_modules
 language:
 - c
 - python
@@ -46,7 +46,7 @@ script:
 - docker exec ${DOCKER_TEST_CONTAINER} /bin/sh -c 'pwd; ls -lrt; echo $PATH; PATH=/opt/gcc-arm/bin:$PATH;
   ./install-test.sh; echo $PATH'
 - sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'touch scripts/testfile; echo
-  "this is a modified file" >> scripts/testfile; make;./test.py'; make scripts/ctest
+  "this is a modified file" >> scripts/testfile; make;./test.py'; make -C scripts/ctest
 - sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh -p 9006 -q -o UserKnownHostsFile=/dev/null
   -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
 - sudo docker exec ${DOCKER_TEST_CONTAINER} aws s3 ls > /dev/null
@@ -87,6 +87,12 @@ jobs:
     - echo "Skip this stage"
     script:
     - echo "Build stage for 16.04 is Complete"
+    after_script:
+    - docker logs ${DOCKER_TEST_CONTAINER}
+    - docker ps -aq
+    - docker stop $(docker ps -aq)
+    - docker rm $(docker ps -aq)
+    - docker rmi $DOCKER_COMMIT_IMAGE --force
   - stage: build
     name: Build Ubuntu18.04
     if: type = push AND commit_message=build
@@ -105,7 +111,11 @@ jobs:
     script:
     - echo "Build stage for 18.04 is Complete and Container is ${DOCKER_CONTAINER_NAME}"
     after_script:
-    - echo "Skip the after script stage"
+    - docker logs ${DOCKER_TEST_CONTAINER}
+    - docker ps -aq
+    - docker stop $(docker ps -aq)
+    - docker rm $(docker ps -aq)
+    - docker rmi $DOCKER_COMMIT_IMAGE --force
   - stage: test
     name: Test on Ubuntu16.04
     env:
@@ -128,10 +138,10 @@ jobs:
     before_install:
     - echo $DOCKERPASS2 | docker login -u $DOCKERUSER2 --password-stdin
     - docker pull $DOCKERUSER2/${DOCKER_REPO}:latest
-addons:
-  artifacts:
-    debug: true
-    working_dir: "${PWD}/scripts"
+#addons:
+#  artifacts:
+#    debug: true
+#    working_dir: "${PWD}/scripts"
   #  paths:
   #  - $(git ls-files -o | tr "\n" ":")
   #  - $(ls /tmp/tmp.* | tr "\n" ':')
