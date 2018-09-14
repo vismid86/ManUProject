@@ -39,55 +39,31 @@ before_script:
 - ssh-add ~/.ssh/travis_rsa > /dev/null
 script:
 - echo "Test stage for ${DOCKER_REPO} is Started"
-- >-
-  sudo docker run --name ${DOCKER_TEST_CONTAINER} -dit
-  -v `pwd`:${DOCKER_WORK_DIR}
-  -v $SSH_AUTH_SOCK:/ssh-agent
-  -e SSH_AUTH_SOCK=/ssh-agent
-  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-  -e AWS_REGION=$AWS_REGION
-  -e host=$host
+- sudo docker run --name ${DOCKER_TEST_CONTAINER} -dit -v `pwd`:${DOCKER_WORK_DIR}
+  -v $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_REGION=$AWS_REGION -e host=$host
   ${DOCKERUSER}/${DOCKER_REPO}:latest
 - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'uname -a; lsb_release -a'
-# -v ~/.ssh:/keyfile
-#- sudo docker exec ${DOCKER_TEST_CONTAINER} aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-#- sudo docker exec ${DOCKER_TEST_CONTAINER} aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-#- sudo docker exec ${DOCKER_TEST_CONTAINER} aws configure set default.region $AWS_REGION
 - docker exec ${DOCKER_TEST_CONTAINER} /bin/sh -c 'pwd; ls -lrt; echo $PATH; PATH=/opt/gcc-arm/bin:$PATH;
   ./install-test.sh; echo $PATH'
 - sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'touch scripts/testfile; echo
   "this is a modified file" >> scripts/testfile; make;./test.py'
-#- docker cp $(docker ps -l -q):/tmp /tmp
-- docker exec ${DOCKER_TEST_CONTAINER} bash -c 'cd ../keyfile; ls -lrt; echo "Finished successfully"'
-- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh -p 9006 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
-#- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'eval "$(ssh-agent -s)";ssh-add ../keyfile/travis_rsa; ssh -tt -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1 && exit''
+- docker exec ${DOCKER_TEST_CONTAINER} bash -c 'cd ../keyfile; ls -lrt; echo "Finished
+  successfully"'
+- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh -p 9006 -q -o UserKnownHostsFile=/dev/null
+  -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
 - sudo docker exec ${DOCKER_TEST_CONTAINER} aws s3 ls
-#- aws s3 cp expect.svg s3://com.myriota.static-http/test/travis/expect.svg $badge_args
-#- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh-add -l; ssh-add -D'
-- >-
-  sudo docker run --name testcontainer -dit
-  -v `pwd`:${DOCKER_WORK_DIR}
-  -v $SSH_AUTH_SOCK:/ssh-agent
-  -e SSH_AUTH_SOCK=/ssh-agent
-  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-  -e AWS_REGION=$AWS_REGION
-  -e host=$host
-  ${DOCKERUSER}/${DOCKER_REPO}:latest
-- sudo docker exec testcontainer bash -c 'ssh -p 9006 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
+- aws s3 cp expect.svg s3://com.myriota.static-http/test/travis/expect.svg $badge_args
+- sudo docker run --name testcontainer -dit -v `pwd`:${DOCKER_WORK_DIR} -v $SSH_AUTH_SOCK:/ssh-agent
+  -e SSH_AUTH_SOCK=/ssh-agent -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+  -e AWS_REGION=$AWS_REGION -e host=$host ${DOCKERUSER}/${DOCKER_REPO}:latest
+- sudo docker exec testcontainer bash -c 'ssh -p 9006 -q -o UserKnownHostsFile=/dev/null
+  -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
 - sudo docker exec testcontainer aws s3 ls
-#- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh -tt -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'sleep 1 && exit''
-#- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'mv ../keyfile/travis_rsa ~/.ssh/id_rsa; ssh -tt -p 9006 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'sleep 1 && exit''
 after_script:
-#- cat /tmp/tmp.*
-#- cat ~/.ssh/id_rsa.pub
 - ssh -p 9006 -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=10
   ${host} 'whoami; sleep 1 && exit'
 - sudo apt-get update; sudo apt-get -y install awscli
-#- aws configure set default.region $AWS_REGION
-#- aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-#- aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 - aws s3 ls
 - docker logs ${DOCKER_TEST_CONTAINER}
 - docker ps -aq
@@ -185,4 +161,4 @@ env:
   - secure: MHVKlzKXA0wwubAZEwP3qM3MiQ0Wis3br2RLshCpqImC9WAQ4e+KybYqLlX9ideHnmOdrbTGPQgyolP/19AsEO3vvwhaId9e8vyWGvlDNsMdtPaeD0abHaNvs1vWHXV8dpBCw9pKPRZq1WZF3mTHvrjR2Xd1pXonX09znz+hYmz65+HgvaNuVJ9WPyTcyrW9peRoX5Sa8sMzJ9A0qiXl7qWIzFbqodW14fJo8UaVJNuPpB9d6yErHO/pVy1Q5ae2VPD2oevssWKZ7h+i5/fGzCZzeYg+HUq3pOkt9rHY2WMAYFbNjlHbEgsJzvSXL/QZ/Mtg9VQDHEm2va10iV7Hq3oOtXeGunQYp68U+IjcCTeHMp07eaxtI321bHx4Q1I2p26qhMXBFzPZkOL0aiPdQWHlzOfwYwU0D9B9S3FfqTW5zvyTuM3LEd9Zpe8ttIY1/r+XWOoY9uSrAGNnI/xQfsmDGsLha98S3hGVVJr7jFvy2DBL0wG87zmndcY7iAdpFIAKvkWJ0JxrtvEXXiCEMHg+M7LGTskPL6Ix7ANIqTq+ZtHYfVUm7fC9hxcdw5pYv0YrYwiVrVMCqlTtTowG1quLTtT9bB1uQSzg9qAKGQzZ4aBTAD3LdPmdtt5ehclF/fIk4ngxmHVmCfFNdYtsd6S5CCPxkEXNNVwtktBLLqQ=
   - secure: GmZEreZAQZGhteN7B95dKmOhkQ5PwSX8d/L2KIbiqv7g5UQdBqXyKwXtFjbeRZ/9Jo56+oc+silnp+v+kWCRsZpNzf+ZGeHMfSHh1nwXGk9Yh7qKCHB9u4fsHdK6RzY4hTQCLCjSfTNHYpqXYk2cklJwLeG40FaaujCJoNPKr0PBUThu95h5bV+/kMeYQO1zNbMfnfY4AD4OQo9aBMDsyJyuBwTYlIrfH1KQsC83oJIJxIgAVgp/lh1VZBGN6YOrcT4axh5HptIFIB0ESjdhSxQ5rwhKPBUPNrLXr5SHxhrqo+DNMOD7ThuTn8BT9WhKXHSFCQzeErfs0ZG0PhvLLXSurzIKTW+nvQ9t8lGkfKwunpw+BGMc8hA+TKMT8+9FxniqfZt3JIr7+li/8F7nQMEWDp9ps0LUJPBWOOIat/evmK7q5JKcmtRR78W7GoPzHESSKgwjSvOVOBuBxcvG4O/xpatV5Da4PC+2aJrvhoYk6zm4K5Al0R+IDqYtZEUptGIPY8iLrhXL3k1HlnSc1SXwfIl5/k7x+XHa13PMAXlQItAgnq98S0bDUlpMIOmBQOmC10kQKjsZ3WJJlErvozYg1lAYvIW44YzdYyGrOI+YTKOoJJ9fPNzv0pQWz7uuG3UMAdaSB+O4dL9lvBkYiWt+76YV3pa9xf3M+FXWLt0=
   - secure: jDaJkszgNzBNPt/6wQQ1UvkE6llcZGv3B+yYm23abwgq0ZkWWcbTOnhsH1XAkwo+IqxtyjQsu/+/uw8h99pQuQvOPig7B33BSuQQ+rGuW8NtvTba+2dk3/uoBT+fbzMqNCPrvHxujf3nBjjJRLuKSrP52lhATKFL9ionhBDzJmOnC3Uo8eRWI44mRGpkEgapB6DpISv2qH4UxttGaGlYMZ8F9lW/8Mu7vQcPjUqWg2D+C5Yei14FE/Y+pJMc9teq/KS/kQV4CDuFKIwMmuDT0YgX9OUXGlGd6U0nI3MqSjxrLdO57x8mVFI294CwCnV0RB5F+xznAg/hOv0/LpvZDytGfYaZ4qfuLSISmHjFOzAkQIvP1sK0gMyqmr3+jWBfb5FFufM31R+Y8OOPIX45/vUql8lXaq6hu7NCQGz80WknpX1YaesqAMvlcTGMGT0C2+2WebkFE5fF9C5iz92tflYnpqeX8Eh76k2BW7PSkDkHYjKJITFnDn4EpUV9njlH1uklrlG3GoQhPrcU8D6C3CuVShUiW5cd9H/Z2tSTOQfh2fwmTa0vOw3OHpUI7U5RX++VVU7CmER633fjJ7EIlaksVFybCSG2l5bNONQvS99TlPUF46i0uhARfYZioIG7M/nlE+SUO+W+WtkHNM/opalJ38cPIfWNBumMXl2DpwU=
-  - if [ "$(git diff --name-only $TRAVIS_BRANCH | grep "install-apt.sh")" == "install-apt.sh" ]; then echo "FOO=build"; fi
+  - secure: pnlfcnYTqabfR0bKfsbS1h4BgqXY/38yMVE42sCnx3E6V/gUV85LO8kCWV1V41IzJZrpdhkhojP3kIj2BQjtydA6Z2Xmvb4wx2OKwHWmdXzl+L18fIg+GsJiRzqlQ3fuNAXCe/UbIuFBb0qM4h7+iLk7K0CNZOSHFbaOsT0EFiRk+pbAehBb7tyYfRl1jYZrQHT8nNjVxrcZDKTTzX9xoWDYke5VZhB31ncAMkLZiJq9yXu88B+242Li2EVT/7wU4l4/uXqIH2fWNhR/yJyQoy+5H5wKgpAjaqBlWOwwEz8SLml65hg/IQc+5nKz5/b8mOaQJ0h2JBl5VEIERe1rf/rCiAm3hpnoc3ZQ6zaoullxQtDizlPmWFV3lqT/ySN3fsuL2MwedR0+SUgRyF6jrl2AEeKHWWUXjc5AenJPe7+DLVZAcnw0q0n7wsMJZ0Z2I/qVHA9+ELtUE8Y5TQF89Hj2NSThOnbNJBOrHLNu5iMUZ8ac35lbx/yRXmvyMxA2GARO7vWAvoEZXGT9WvTHIZC//hmaEtdqWEr1Su33b6a5hkmKQ7gI7KW+1sJqG179SXqYYnQu9Mx6yeCkK9B9i1TvUzfC+bJMcOMkNp53olBDA5s9CY+CWVT0cnCiBF960LPxu2eWV5P6fhNsg76Pokt9vKXZ7dwd93ewXlxVNhw=
