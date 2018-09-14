@@ -49,6 +49,7 @@ script:
   -e AWS_REGION=$AWS_REGION
   -e host=$host
   ${DOCKERUSER}/${DOCKER_REPO}:latest
+- docker exec ${DOCKER_TEST_CONTAINER} bash -c 'uname -a; lsb_release -a'
 # -v ~/.ssh:/keyfile
 #- sudo docker exec ${DOCKER_TEST_CONTAINER} aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
 #- sudo docker exec ${DOCKER_TEST_CONTAINER} aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
@@ -112,8 +113,12 @@ jobs:
     - DOCKER_WORK_DIR=/CI-test-xenial
     - DOCKERUSER=$DOCKERUSER1
     - DOCKERPASS=$DOCKERPASS1
+    before_script:
+    - echo "Skip this stage"
     script:
     - echo "Build stage for 16.04 is Complete and Container is ${DOCKER_CONTAINER_NAME}"
+    after_script:
+    - echo "Skip the after script stage"
   - stage: build
     name: Build Ubuntu18.04
     if: type = push AND commit_message=build
@@ -127,8 +132,12 @@ jobs:
     - DOCKER_WORK_DIR=/CI-test-bionic
     - DOCKERUSER=$DOCKERUSER2
     - DOCKERPASS=$DOCKERPASS2
+    before_script:
+    - echo "Skip this stage"
     script:
     - echo "Build stage for 18.04 is Complete and Container is ${DOCKER_CONTAINER_NAME}"
+    after_script:
+    - echo "Skip the after script stage"
   - stage: test
     name: Test on Ubuntu16.04
     env:
