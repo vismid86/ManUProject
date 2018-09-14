@@ -1,6 +1,0 @@
-#!/bin/bash
-isExistApp = `pgrep python`
-if [[ -n  $isExistApp ]]; then
-    pkill -9 python       
-fi
-

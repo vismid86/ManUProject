@@ -1,7 +1,0 @@
-#!/bin/bash
-sudo pkill -9 python
-sudo chmod 777 /var/local/Health_Recorder.py
-sudo python /var/local/Health_Recorder.py > /dev/null 2> /dev/null < /dev/null &
-exit 0
-
-
