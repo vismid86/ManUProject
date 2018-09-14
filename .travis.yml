@@ -102,7 +102,7 @@ jobs:
   include:
   - stage: build
     name: Build Ubuntu16.04
-    if: type = push AND env(FOO) = build
+    if: type = push AND env(FOO)=build
     env:
     - DOCKER_PATH=ubuntu16.04
     - DOCKER_BUILD_NAME=travis
