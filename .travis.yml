@@ -53,7 +53,7 @@ script:
 - sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh -p 9006 -q -o UserKnownHostsFile=/dev/null
   -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
 - sudo docker exec ${DOCKER_TEST_CONTAINER} aws s3 ls
-- sudo docker exec ${DOCKER_TEST_CONTAINER} aws s3 cp expect.svg s3://com.myriota.static-http/test/travis/expect.svg $badge_args
+- sudo docker exec ${DOCKER_TEST_CONTAINER} aws s3 cp expect.svg s3://com.myriota.static-http/test/travis/expect.svg --content-type image/svg+xml --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers full=emailaddress=aws-production@myriota.com --cache-control max-age=0
 - sudo docker run --name testcontainer -dit -v `pwd`:${DOCKER_WORK_DIR} -v $SSH_AUTH_SOCK:/ssh-agent
   -e SSH_AUTH_SOCK=/ssh-agent -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
   -e AWS_REGION=$AWS_REGION -e host=$host ${DOCKERUSER}/${DOCKER_REPO}:latest
