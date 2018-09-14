@@ -57,6 +57,7 @@ script:
 - sudo docker exec testcontainer bash -c 'ssh -p 9006 -q -o UserKnownHostsFile=/dev/null
   -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
 - sudo docker exec testcontainer aws s3 ls > /dev/null
+- git ls-files -o
 after_script:
 - docker logs ${DOCKER_TEST_CONTAINER}
 - docker ps -aq
@@ -130,10 +131,10 @@ jobs:
 addons:
   artifacts:
     debug: true
-    working_dir: "${PWD}/blinky"
-    paths:
-    - $(git ls-files -o | tr "\n" ":")
-    - $(ls /tmp/tmp.* | tr "\n" ':')
+    working_dir: "${PWD}/scripts"
+  #  paths:
+  #  - $(git ls-files -o | tr "\n" ":")
+  #  - $(ls /tmp/tmp.* | tr "\n" ':')
 notifications:
   email:
     recipients:
