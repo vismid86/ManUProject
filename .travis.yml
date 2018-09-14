@@ -88,7 +88,6 @@ jobs:
     script:
     - echo "Build stage for 16.04 is Complete"
     after_script:
-    - docker logs ${DOCKER_TEST_CONTAINER}
     - docker ps -aq
     - docker stop $(docker ps -aq)
     - docker rm $(docker ps -aq)
@@ -111,7 +110,6 @@ jobs:
     script:
     - echo "Build stage for 18.04 is Complete and Container is ${DOCKER_CONTAINER_NAME}"
     after_script:
-    - docker logs ${DOCKER_TEST_CONTAINER}
     - docker ps -aq
     - docker stop $(docker ps -aq)
     - docker rm $(docker ps -aq)
