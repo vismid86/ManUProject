@@ -137,6 +137,17 @@ jobs:
     before_install:
     - echo $DOCKERPASS2 | docker login -u $DOCKERUSER2 --password-stdin
     - docker pull $DOCKERUSER2/${DOCKER_REPO}:latest
+  - stage: test
+    name: Test on 3rdconcureent job
+    env:
+    - DOCKER_REPO=travis-xenial
+    - DOCKER_WORK_DIR=/CI-test-xenial
+    - DOCKER_TEST_CONTAINER=testcontainer2-xenial
+    - PATH=/opt/gcc-arm/bin:$PATH
+    - DOCKERUSER=$DOCKERUSER1
+    before_install:
+    - echo $DOCKERPASS1 | docker login -u $DOCKERUSER1 --password-stdin
+    - docker pull $DOCKERUSER1/${DOCKER_REPO}:latest
 #addons:
 #  artifacts:
 #    debug: true
