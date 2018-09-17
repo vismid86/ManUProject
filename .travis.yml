@@ -14,6 +14,7 @@ language:
 - c
 - python
 before_install:
+- if [[ ! $(git diff-tree --no-commit-id --name-only -r HEAD | grep install-apt.sh) ]]; then travis_terminate 0; fi
 - chmod +x install-apt.sh
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
@@ -71,7 +72,7 @@ jobs:
   include:
   - stage: build
     name: Build Ubuntu16.04
-    if: type = push AND commit_message=build
+    if: type = push
     env:
     - DOCKER_PATH=ubuntu16.04
     - DOCKER_BUILD_NAME=travis
@@ -94,7 +95,7 @@ jobs:
     - docker rmi $DOCKER_COMMIT_IMAGE --force
   - stage: build
     name: Build Ubuntu18.04
-    if: type = push AND commit_message=build
+    if: type = push
     env:
     - DOCKER_PATH=ubuntu18.04
     - DOCKER_BUILD_NAME=travis
