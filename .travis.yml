@@ -14,23 +14,18 @@ language:
 - c
 - python
 before_install:
-- if [[ ! $(git diff-tree --no-commit-id --name-only -r HEAD | grep install-apt.sh) ]]; then travis_terminate 0; fi
-- chmod +x install-apt.sh
-- tr -d '\r' < install-apt.sh > install-apt-r.sh
-- chmod +x install-apt-r.sh
-- chmod +x install-test.sh
 - docker --version
-- docker build -f ${DOCKER_PATH}/Dockerfile --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
-  .
-- docker run --name "${DOCKER_CONTAINER_NAME}" -dit -v `pwd`:${DOCKER_WORK_DIR} "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'PATH=/opt/gcc-arm/bin:$PATH;
-  ./install-test.sh; echo $PATH;'
+- docker build -f ${DOCKER_PATH}/Dockerfile --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}" .
+- >-
+  docker run --name "${DOCKER_CONTAINER_NAME}" -dit
+  -v `pwd`:${DOCKER_WORK_DIR}
+  "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'sudo -H pip install --upgrade pip pyserial awscli'
 - docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 - docker images
-- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$DOCKERUSER/${DOCKER_REPO}"
-- echo $DOCKERPASS | docker login -u $DOCKERUSER --password-stdin
-- docker push $DOCKERUSER/${DOCKER_REPO}
+- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$ECR_REGISTRY:latest"
+- eval $(aws ecr get-login --region us-east-1 --no-include-email)
+- docker push "$ECR_REGISTRY:latest"
 before_script:
 - openssl aes-256-cbc -K $encrypted_35f96cd56ce2_key -iv $encrypted_35f96cd56ce2_iv
   -in travis_rsa.enc -out ~/.ssh/travis_rsa -d
@@ -44,19 +39,6 @@ script:
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_REGION=$AWS_REGION -e host=$host
   ${DOCKERUSER}/${DOCKER_REPO}:latest
 - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'uname -a; lsb_release -a'
-- docker exec ${DOCKER_TEST_CONTAINER} /bin/sh -c 'pwd; ls -lrt; echo $PATH; PATH=/opt/gcc-arm/bin:$PATH;
-  ./install-test.sh; echo $PATH'
-- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'touch scripts/testfile; echo
-  "this is a modified file" >> scripts/testfile; make;./test.py'; make -C scripts/ctest
-- sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'ssh -p 9006 -q -o UserKnownHostsFile=/dev/null
-  -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
-- sudo docker exec ${DOCKER_TEST_CONTAINER} aws s3 ls > /dev/null
-- sudo docker run --name testcontainer -dit -v `pwd`:${DOCKER_WORK_DIR} -v $SSH_AUTH_SOCK:/ssh-agent
-  -e SSH_AUTH_SOCK=/ssh-agent -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-  -e AWS_REGION=$AWS_REGION -e host=$host ${DOCKERUSER}/${DOCKER_REPO}:latest
-- sudo docker exec testcontainer bash -c 'ssh -p 9006 -q -o UserKnownHostsFile=/dev/null
-  -o StrictHostKeyChecking=no -o ConnectTimeout=10 $host 'pwd && sleep 1''
-- sudo docker exec testcontainer aws s3 ls > /dev/null
 - git ls-files -o
 after_script:
 - docker logs ${DOCKER_TEST_CONTAINER}
@@ -81,35 +63,12 @@ jobs:
     - DOCKER_TAG=16.04
     - DOCKER_REPO=travis-xenial
     - DOCKER_WORK_DIR=/CI-test-xenial
-    - DOCKERUSER=$DOCKERUSER1
-    - DOCKERPASS=$DOCKERPASS1
+    - ECR_REGISTRY="101688609206.dkr.ecr.us-east-1.amazonaws.com/travisci-16.04"
     #before_install
     before_script:
     - echo "Skip this stage"
     script:
     - echo "Build stage for 16.04 is Complete"
-    after_script:
-    - docker ps -aq
-    - docker stop $(docker ps -aq)
-    - docker rm $(docker ps -aq)
-    - docker rmi $DOCKER_COMMIT_IMAGE --force
-  - stage: build
-    name: Build Ubuntu18.04
-    if: type = push
-    env:
-    - DOCKER_PATH=ubuntu18.04
-    - DOCKER_BUILD_NAME=travis
-    - DOCKER_CONTAINER_NAME=travis-cont-bionic
-    - DOCKER_COMMIT_IMAGE=myriota-travis
-    - DOCKER_TAG=18.04
-    - DOCKER_REPO=travis-bionic
-    - DOCKER_WORK_DIR=/CI-test-bionic
-    - DOCKERUSER=$DOCKERUSER2
-    - DOCKERPASS=$DOCKERPASS2
-    before_script:
-    - echo "Skip this stage"
-    script:
-    - echo "Build stage for 18.04 is Complete and Container is ${DOCKER_CONTAINER_NAME}"
     after_script:
     - docker ps -aq
     - docker stop $(docker ps -aq)
@@ -124,52 +83,9 @@ jobs:
     - PATH=/opt/gcc-arm/bin:$PATH
     - DOCKERUSER=$DOCKERUSER1
     before_install:
-    - echo $DOCKERPASS1 | docker login -u $DOCKERUSER1 --password-stdin
-    - docker pull $DOCKERUSER1/${DOCKER_REPO}:latest
-  - stage: test
-    name: Test on Ubuntu18.04
-    env:
-    - DOCKER_REPO=travis-bionic
-    - DOCKER_WORK_DIR=/CI-test-bionic
-    - DOCKER_TEST_CONTAINER=testcontainer-bionic
-    - PATH=/opt/gcc-arm/bin:$PATH
-    - DOCKERUSER=$DOCKERUSER2
-    before_install:
-    - echo $DOCKERPASS2 | docker login -u $DOCKERUSER2 --password-stdin
-    - docker pull $DOCKERUSER2/${DOCKER_REPO}:latest
-  - stage: test
-    name: Test on 3rdconcureent job
-    env:
-    - DOCKER_REPO=travis-xenial
-    - DOCKER_WORK_DIR=/CI-test-xenial
-    - DOCKER_TEST_CONTAINER=testcontainer2-xenial
-    - PATH=/opt/gcc-arm/bin:$PATH
-    - DOCKERUSER=$DOCKERUSER1
-    before_install:
-    - echo $DOCKERPASS1 | docker login -u $DOCKERUSER1 --password-stdin
-    - docker pull $DOCKERUSER1/${DOCKER_REPO}:latest
-  - stage: test
-    name: Test on 4thconcureent job
-    env:
-    - DOCKER_REPO=travis-xenial
-    - DOCKER_WORK_DIR=/CI-test-xenial
-    - DOCKER_TEST_CONTAINER=testcontainer3-xenial
-    - PATH=/opt/gcc-arm/bin:$PATH
-    - DOCKERUSER=$DOCKERUSER1
-    before_install:
-    - echo $DOCKERPASS1 | docker login -u $DOCKERUSER1 --password-stdin
-    - docker pull $DOCKERUSER1/${DOCKER_REPO}:latest
-  - stage: test
-    name: Test on Ubuntu18.04 5th
-    env:
-    - DOCKER_REPO=travis-bionic
-    - DOCKER_WORK_DIR=/CI-test-bionic
-    - DOCKER_TEST_CONTAINER=testcontainer2-bionic
-    - PATH=/opt/gcc-arm/bin:$PATH
-    - DOCKERUSER=$DOCKERUSER2
-    before_install:
-    - echo $DOCKERPASS2 | docker login -u $DOCKERUSER2 --password-stdin
-    - docker pull $DOCKERUSER2/${DOCKER_REPO}:latest
+    - pip install awscli
+    - eval $(aws ecr get-login --region us-east-1 --no-include-email)
+    - docker pull "$ECR_REGISTRY:latest"
 #addons:
 #  artifacts:
 #    debug: true
