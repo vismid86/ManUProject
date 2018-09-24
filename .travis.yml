@@ -24,6 +24,7 @@ before_install:
 - docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 - docker images
 - docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$ECR_REGISTRY:latest"
+- pip install awscli
 - eval $(aws ecr get-login --region us-east-1 --no-include-email)
 - docker push "$ECR_REGISTRY:latest"
 before_script:
