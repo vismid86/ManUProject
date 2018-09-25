@@ -39,7 +39,7 @@ script:
 - sudo docker run --name ${DOCKER_TEST_CONTAINER} -dit -v `pwd`:${DOCKER_WORK_DIR}
   -v $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_REGION=$AWS_REGION -e host=$host -e PATH=/opt/gcc-arm/bin:$PATH
-  ${DOCKERUSER}/${DOCKER_REPO}:latest 
+  $ECR_REGISTRY:latest 
 - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'uname -a; lsb_release -a; echo $PATH'
 - git ls-files -o
 after_script:
