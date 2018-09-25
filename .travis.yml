@@ -14,6 +14,7 @@ language:
 - c
 - python
 before_install:
+- if [[ ! $(git diff-tree --no-commit-id --name-only -r HEAD | grep install-apt.sh) ]]; then travis_terminate 0; fi
 - docker --version
 - docker build -f ${DOCKER_PATH}/Dockerfile --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}" .
 - >-
@@ -37,9 +38,9 @@ script:
 - echo "Test stage for ${DOCKER_REPO} is Started"
 - sudo docker run --name ${DOCKER_TEST_CONTAINER} -dit -v `pwd`:${DOCKER_WORK_DIR}
   -v $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_REGION=$AWS_REGION -e host=$host
-  ${DOCKERUSER}/${DOCKER_REPO}:latest
-- docker exec ${DOCKER_TEST_CONTAINER} bash -c 'uname -a; lsb_release -a'
+  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_REGION=$AWS_REGION -e host=$host -e PATH=/opt/gcc-arm/bin:$PATH
+  ${DOCKERUSER}/${DOCKER_REPO}:latest 
+- docker exec ${DOCKER_TEST_CONTAINER} bash -c 'uname -a; lsb_release -a; echo $PATH'
 - git ls-files -o
 after_script:
 - docker logs ${DOCKER_TEST_CONTAINER}
@@ -83,6 +84,7 @@ jobs:
     - DOCKER_TEST_CONTAINER=testcontainer-xenial
     - PATH=/opt/gcc-arm/bin:$PATH
     - DOCKERUSER=$DOCKERUSER1
+    - ECR_REGISTRY="101688609206.dkr.ecr.us-east-1.amazonaws.com/travisci-18.04"
     before_install:
     - sudo -H pip install awscli
     - eval $(aws ecr get-login --region us-east-1 --no-include-email)
