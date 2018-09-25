@@ -20,7 +20,7 @@ before_install:
   docker run --name "${DOCKER_CONTAINER_NAME}" -dit
   -v `pwd`:${DOCKER_WORK_DIR}
   "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
-#- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'sudo -H pip install --upgrade pip pyserial awscli'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'sudo apt-get -y install git xxd'
 - docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 - docker images
 - docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$ECR_REGISTRY:latest"
