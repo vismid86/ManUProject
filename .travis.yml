@@ -37,7 +37,7 @@ script:
   $ECR_REGISTRY:latest
 - docker exec ${DOCKER_TEST_CONTAINER} bash -c 'uname -a; PATH=/opt/gcc-arm/bin:$PATH ; lsb_release -a; echo $PATH; arm-none-eabi-gcc --version | grep -q 7.2.1; ./install-test.sh;'
 - sudo docker exec ${DOCKER_TEST_CONTAINER} bash -c 'touch scripts/testfile; echo  "this is a modified file" >> scripts/testfile; make;./test.py; make -C scripts/ctest'
-- for f in $(git ls-files -o); do cat $f >> final.log; done
+- testfolder=scripts;for f in $(find $testfolder -type f -name testfile); do echo "log_start for $f"; cat $f; echo "log_end for $f" >> final.log; done
 - cat final.log
 after_script:
 - docker logs ${DOCKER_TEST_CONTAINER}
