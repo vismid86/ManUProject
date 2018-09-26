@@ -50,7 +50,7 @@ after_script:
 - rm ~/.ssh/travis_rsa
 jobs:
   include:
-    if: branch = travis-ci AND type = pull_request
+  if: branch = travis-ci AND type = pull_request
   - stage: build
     name: Build Ubuntu16.04
     if: type = push
