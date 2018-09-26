@@ -50,10 +50,9 @@ after_script:
 - rm ~/.ssh/travis_rsa
 jobs:
   include:
-  if: branch = travis-ci AND type = pull_request
   - stage: build
     name: Build Ubuntu16.04
-    if: type = push
+    if: branch = travis-ci AND type = pull_request
     env:
     - DOCKER_PATH=ubuntu16.04
     - DOCKER_BUILD_NAME=travis
@@ -75,6 +74,7 @@ jobs:
     - docker rmi $DOCKER_COMMIT_IMAGE --force
   - stage: test
     name: Test on Ubuntu16.04
+    if: branch = travis-ci AND type = pull_request
     env:
     - DOCKER_REPO=travis-xenial
     - DOCKER_WORK_DIR=/travisci-16.04
@@ -87,6 +87,7 @@ jobs:
     - sudo -H pip install awscli
     - eval $(aws ecr get-login --region us-east-1 --no-include-email)
     - docker pull "$ECR_REGISTRY:latest"
+
 #addons:
 #  artifacts:
 #    debug: true
