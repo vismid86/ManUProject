@@ -49,8 +49,8 @@ after_script:
 - ssh-add -D
 - rm ~/.ssh/travis_rsa
 jobs:
-  if: branch = travis-ci
   include:
+    if: branch = travis-ci AND type = pull_request
   - stage: build
     name: Build Ubuntu16.04
     if: type = push
