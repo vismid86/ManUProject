@@ -9,7 +9,7 @@ language:
 - c
 - python
 
-if: branch = travis-ci AND type = pull_request
+if: branch = travis-ci AND type = push
 before_install:
 - if [[ ! $(git diff-tree --no-commit-id --name-only -r HEAD | grep install-apt.sh) ]]; then travis_terminate 0; fi
 - docker --version
