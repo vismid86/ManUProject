@@ -11,7 +11,7 @@ language:
 
 if: branch = travis-ci AND type = push
 before_install:
-- if [[ ! $(git diff-tree --no-commit-id --name-only -r HEAD | grep install-apt.sh) ]]; then travis_terminate 0; fi
+#- if [[ ! $(git diff-tree --no-commit-id --name-only -r HEAD | grep install-apt.sh) ]]; then travis_terminate 0; fi
 - docker --version
 - docker build -f ${DOCKER_PATH}/Dockerfile --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}" .
 - >-
