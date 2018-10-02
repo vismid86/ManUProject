@@ -11,6 +11,7 @@ language:
 
 if: branch = travis-ci AND type = push
 before_install:
+- if [[ ! $(git --no-pager diff --name-only FETCH_HEAD $(git merge-base FETCH_HEAD travis-ci)) | grep install-apt.sh ]]; then travis_terminate 0; fi
 - python2 -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
 #- if [[ ! $(git diff-tree --no-commit-id --name-only -r HEAD | grep install-apt.sh) ]]; then travis_terminate 0; fi
 - chmod +x install-apt.sh
