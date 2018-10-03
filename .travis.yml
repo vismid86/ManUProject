@@ -11,7 +11,7 @@ language:
 
 if: branch = travis-ci AND type = push
 before_install:
-- if [[ ! $(git --no-pager diff --name-only FETCH_HEAD $(git merge-base FETCH_HEAD travis-ci) | grep install-apt.sh) ]]; then travis_terminate 0; fi
+#- if [[ ! $(git --no-pager diff --name-only FETCH_HEAD $(git merge-base FETCH_HEAD travis-ci) | grep install-apt.sh) ]]; then travis_terminate 0; fi
 - python2 -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
 #- if [[ ! $(git diff-tree --no-commit-id --name-only -r HEAD | grep install-apt.sh) ]]; then travis_terminate 0; fi
 - chmod +x install-apt.sh
@@ -25,15 +25,14 @@ before_install:
   -v `pwd`:${DOCKER_WORK_DIR}
   "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
 #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'sudo apt-get -y install git xxd'
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'PATH=/opt/gcc-arm/bin:$PATH;
-  ./install-test.sh; echo $PATH;'
-- docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
+#- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'git clone git@github.com:Myriota/SDK.git testsdkclone'
+#- docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 - docker images
-- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$ECR_REGISTRY:latest"
-- sudo -H pip install awscli
-- eval $(aws ecr get-login --region us-east-1 --no-include-email)
-- docker push "$ECR_REGISTRY:latest"
+#- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$ECR_REGISTRY:latest"
+#- sudo -H pip install awscli
+#- eval $(aws ecr get-login --region us-east-1 --no-include-email)
+#- docker push "$ECR_REGISTRY:latest"
 before_script:
 - openssl aes-256-cbc -K $encrypted_35f96cd56ce2_key -iv $encrypted_35f96cd56ce2_iv
   -in travis_rsa.enc -out ~/.ssh/travis_rsa -d
