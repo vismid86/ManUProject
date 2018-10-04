@@ -23,7 +23,8 @@ before_install:
 - eval "$(ssh-agent -s)" > /dev/null
 - chmod 600 ~/.ssh/travis_rsa
 - ssh-add ~/.ssh/travis_rsa > /dev/null
-- ssh-keyscan github.com >> /root/.ssh/known_hosts
+- chmod u+w ~/.ssh/known_hosts
+- ssh-keyscan github.com >> ~/.ssh/known_hosts
 - docker --version
 - docker build -f ${DOCKER_PATH}/Dockerfile --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}" .
 - >-
