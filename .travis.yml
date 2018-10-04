@@ -22,11 +22,11 @@ before_install:
 - docker build -f ${DOCKER_PATH}/Dockerfile --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}" .
 - >-
   docker run --name "${DOCKER_CONTAINER_NAME}" -dit
-  -v `pwd`:${DOCKER_WORK_DIR}
+  -v `pwd`:${DOCKER_WORK_DIR} -v /var/run/docker.sock:/var/run/docker.sock
   "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
 #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'sudo apt-get -y install git xxd'
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; docker ps -a; ls -lrt ~/.ssh; sudo ssh-keyscan github.com >> ~/.ssh/known_hosts;sudo echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> /root/.ssh/config ;  git clone git@github.com:Myriota/SDK.git testsdkclone'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; docker ps -a; docker images; git clone git@github.com:Myriota/SDK.git testsdkclone'
 #- docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 - docker images
 #- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$ECR_REGISTRY:latest"
