@@ -44,4 +44,4 @@ file:
 
 dockerexample: file
 	docker build . --tag test:16.04
-	docker run -v `pwd`:/home/root --mount source=docvol,target=/home/root --rm test:16.04  bash -c 'pwd; ls -lrt'
+	docker run --mount source=docvol,target=/home/root --rm test:16.04  bash -c 'pwd; ls -lrt'
