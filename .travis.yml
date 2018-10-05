@@ -35,7 +35,7 @@ before_install:
   "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
 - docker cp `pwd` ${DOCKER_CONTAINER_NAME}:${DOCKER_WORK_DIR}
   #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'sudo apt-get -y install git xxd'
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; ;ls -lrt;./install-apt-r.sh'
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; docker ps -a; docker images; ls -la /root ;'
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'make dockerexample'
 #- docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
