@@ -34,7 +34,8 @@ before_install:
   "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
 #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'sudo apt-get -y install git xxd'
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; docker ps -a; docker images; ls -la /root ; git clone -v git@github.com:Myriota/SDK.git testsdkclone'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; docker ps -a; docker images; ls -la /root ;'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'make dockerexample'
 #- docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 - docker images
 #- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$ECR_REGISTRY:latest"

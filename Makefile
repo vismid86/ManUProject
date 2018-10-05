@@ -22,10 +22,10 @@
 #instancejson:=$(shell mktemp)
 
 # Temporary user data script
-#userdatascript:=$(shell mktemp)
+#userdatascript:=$(shell mktemp)>
 
 # Create user data script and launch test instance
-test: .FORCE
+test:
 	./test.sh
 
 # Run script locally
@@ -33,5 +33,13 @@ test: .FORCE
 #	printf "\nGithub badge links:"
 #	./markdown_badge_links
 #	bash $(userdatascript)
+export SDK_ROOTDIR:=$(shell mktemp -d)
 
-.FORCE:
+file:
+	cd $(SDK_ROOTDIR)
+	touch installfile
+	echo "modify" >> installfile
+
+dockerexample: file
+	docker build . --tag test:16.04
+	docker run -v $(SDK_ROOTDIR):/home/root --rm test:16.04  bash -c 'pwd; ls -lrt'
