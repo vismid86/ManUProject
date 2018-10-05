@@ -39,6 +39,8 @@ file:
 	cd $(SDK_ROOTDIR)
 	touch installfile
 	echo "modify" >> installfile
+	ls -lrt
+	cd ..
 
 dockerexample: file
 	docker build . --tag test:16.04
