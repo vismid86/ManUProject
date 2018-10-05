@@ -34,13 +34,18 @@ test:
 #	./markdown_badge_links
 #	bash $(userdatascript)
 export SDK_ROOTDIR:=$(shell mktemp -d)
+export ROOTDIR := $(realpath .)
 
 file:
+	pwd
+	echo env
 	cd $(SDK_ROOTDIR)
 	touch installfile
 	echo "modify" >> installfile
 	ls -lrt
+	pwd
 	cd ..
+	pwd
 
 dockerexample: file
 	mkdir -p sdkdocdir
