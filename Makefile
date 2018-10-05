@@ -38,18 +38,17 @@ export ROOTDIR := $(realpath .)
 
 file:
 	pwd
-	echo $env
-	cd $(SDK_ROOTDIR)
+	cd $(SDK_ROOTDIR); pwd; ls -lrt
 	touch installfile
 	echo "modify" >> installfile
 	ls -lrt
 	pwd
-	cd ..
+	cd ..; pwd ; ls -lrt
 	pwd
 
 dockerexample: file
 	mkdir -p sdkdocdir
 	cp -r $(SDK_ROOTDIR) sdkdocdir
-	cd sdkdocdir
+	cd sdkdocdir; pwd
 	docker build . --tag test:16.04
 	docker run -v /var/doc-home:/home/root --rm test:16.04  bash -c 'pwd; ls -lrt'
