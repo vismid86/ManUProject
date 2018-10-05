@@ -18,14 +18,14 @@ before_install:
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
 - chmod +x install-test.sh
-#- openssl aes-256-cbc -K $encrypted_35f96cd56ce2_key -iv $encrypted_35f96cd56ce2_iv
-#  -in travis_rsa.enc -out ~/.ssh/travis_rsa -d
-#- eval "$(ssh-agent -s)" > /dev/null
-#- chmod 600 ~/.ssh/travis_rsa
-#- ssh-add ~/.ssh/travis_rsa > /dev/null
+- openssl aes-256-cbc -K $encrypted_35f96cd56ce2_key -iv $encrypted_35f96cd56ce2_iv
+  -in travis_rsa.enc -out ~/.ssh/travis_rsa -d
+- eval "$(ssh-agent -s)" > /dev/null
+- chmod 600 ~/.ssh/travis_rsa
+- ssh-add ~/.ssh/travis_rsa > /dev/null
 #- chmod u+w ~/.ssh/known_hosts
 #- ssh-keyscan github.com >> ~/.ssh/known_hosts
-#- hostpath=$pwd
+- export hostdir=`pwd`
 #- cat $hostpath
 - pwd; ls -lrt
 #- docker volume create docvol
@@ -39,7 +39,7 @@ before_install:
 - >-
   docker run --name "${DOCKER_CONTAINER_NAME}" -dit
   -v ~/.ssh/known_hosts:/root/.ssh/known_hosts
-  -v `pwd`:${DOCKER_WORK_DIR} -v /var/run/docker.sock:/var/run/docker.sock -v $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent
+  -v $(hostdir):${DOCKER_WORK_DIR} -v /var/run/docker.sock:/var/run/docker.sock -v $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent
   "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
 #- docker cp `pwd`/. ${DOCKER_CONTAINER_NAME}:${DOCKER_WORK_DIR}
 #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'sudo apt-get -y install git xxd'
