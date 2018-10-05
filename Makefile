@@ -44,7 +44,7 @@ file:
 
 dockerexample: file
 	mkdir -p sdkdocdir
-	cp -r $(SDK_ROOTDIR)/ sdkdocdir
+	cp -r $(SDK_ROOTDIR)/. sdkdocdir
 	cd sdkdocdir; pwd
 	docker build . --tag test:16.04
 	docker run -v $(slvdir):/home/root --rm test:16.04  bash -c 'cd sdkdocdir; pwd; ls -lrt'
