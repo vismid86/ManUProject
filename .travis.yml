@@ -25,6 +25,9 @@ before_install:
 - ssh-add ~/.ssh/travis_rsa > /dev/null
 - chmod u+w ~/.ssh/known_hosts
 - ssh-keyscan github.com >> ~/.ssh/known_hosts
+- hostpath=$pwd
+- cat $hostpath
+- pwd; ls -lrt
 #- docker volume create docvol
 - docker --version
 - docker build -f ${DOCKER_PATH}/Dockerfile --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}" .

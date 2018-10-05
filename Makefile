@@ -38,7 +38,7 @@ export ROOTDIR := $(realpath .)
 
 file:
 	pwd
-	echo env
+	echo $env
 	cd $(SDK_ROOTDIR)
 	touch installfile
 	echo "modify" >> installfile
