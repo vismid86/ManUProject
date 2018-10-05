@@ -43,5 +43,8 @@ file:
 	cd ..
 
 dockerexample: file
+	mkdir -p sdkdocdir
+	cp -r $(SDK_ROOTDIR) sdkdocdir
+	cd sdkdocdir
 	docker build . --tag test:16.04
-	docker run --mount source=docvol,target=/home/root --rm test:16.04  bash -c 'pwd; ls -lrt'
+	docker run -v `pwd`:/home/root --rm test:16.04  bash -c 'pwd; ls -lrt'
