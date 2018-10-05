@@ -25,9 +25,9 @@ before_install:
 - ssh-add ~/.ssh/travis_rsa > /dev/null
 #- chmod u+w ~/.ssh/known_hosts
 #- ssh-keyscan github.com >> ~/.ssh/known_hosts
-#- export hostdir=`pwd`
+- export hostdir=`pwd`
 #- cat $hostpath
-- sudo ln -s `pwd` /var/doc-home
+#- sudo ln -s `pwd` /var/doc-home
 - pwd; ls -lrt
 #- docker volume create docvol
 - docker --version
@@ -59,7 +59,7 @@ before_script:
 - eval "$(ssh-agent -s)" > /dev/null
 - chmod 600 ~/.ssh/travis_rsa
 - ssh-add ~/.ssh/travis_rsa > /dev/null
-- ssh-keyscan github.com >> /root/.ssh/known_hosts
+#- ssh-keyscan github.com >> /root/.ssh/known_hosts
 script:
 - echo "Test stage for ${DOCKER_REPO} is Started"
 - sudo docker run --name $testfolder -dit -v `pwd`:${DOCKER_WORK_DIR}
@@ -105,7 +105,7 @@ jobs:
     - docker rmi $DOCKER_COMMIT_IMAGE --force
   - stage: test
     name: Test on Ubuntu16.04
-    i#if: branch = travis-ci AND type = pull_request
+    #if: branch = travis-ci AND type = pull_request
     env:
     - DOCKER_REPO=travis-xenial
     - DOCKER_WORK_DIR=/travisci-16.04
@@ -118,6 +118,9 @@ jobs:
     - sudo -H pip install awscli
     - eval $(aws ecr get-login --region us-east-1 --no-include-email)
     - docker pull "$ECR_REGISTRY:latest"
+    before_script:  skip
+    script: skip
+    after_script: skip
 
 #addons:
 #  artifacts:

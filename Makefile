@@ -34,7 +34,7 @@ test:
 #	./markdown_badge_links
 #	bash $(userdatascript)
 export SDK_ROOTDIR:=$(shell mktemp -d)
-export ROOTDIR := $(realpath .)
+#export ROOTDIR := $(realpath .)
 
 file:
 	pwd
@@ -51,4 +51,4 @@ dockerexample: file
 	cp -r $(SDK_ROOTDIR) sdkdocdir
 	cd sdkdocdir; pwd
 	docker build . --tag test:16.04
-	docker run -v /var/doc-home:/home/root --rm test:16.04  bash -c 'pwd; ls -lrt'
+	docker run -v $(hostdir):/home/root --rm test:16.04  bash -c 'cd sdkdocdir; pwd; ls -lrt'
