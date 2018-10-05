@@ -35,9 +35,9 @@ test:
 #	bash $(userdatascript)
 export SDK_ROOTDIR:=$(shell mktemp -d)
 #export ROOTDIR := $(realpath .)
+slvdir:=$(hostdir)
 
 file:
-	slvdir:=$(hostdir)
 	pwd
 	cd $(SDK_ROOTDIR); pwd; ls -lrt
 	touch installfile
