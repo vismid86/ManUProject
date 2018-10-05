@@ -35,16 +35,11 @@ test:
 #	bash $(userdatascript)
 export SDK_ROOTDIR:=$(shell mktemp -d)
 #export ROOTDIR := $(realpath .)
-slvdir:=$(hostdir)
+slvdir ?= $(ROOTDIR)
 
 file:
 	pwd
-	cd $(SDK_ROOTDIR); pwd; ls -lrt
-	touch installfile
-	echo "modify" >> installfile
-	ls -lrt
-	pwd
-	cd ..; pwd ; ls -lrt
+	cd $(SDK_ROOTDIR); touch installfile; echo "modify" >> installfile; pwd; ls -lrt
 	pwd
 
 dockerexample: file

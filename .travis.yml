@@ -27,7 +27,7 @@ before_install:
 #- ssh-keyscan github.com >> ~/.ssh/known_hosts
 - export hostdir=`pwd`
 #- cat $hostpath
-#- sudo ln -s `pwd` /var/doc-home
+- sudo ln -s `pwd` /var/doc-home
 - pwd; ls -lrt
 #- docker volume create docvol
 - docker --version
@@ -47,7 +47,7 @@ before_install:
 #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'sudo apt-get -y install git xxd'
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; ls -lrt;./install-apt-r.sh'
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; docker ps -a; docker images; ls -la /root ;'
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'make dockerexample'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'slvdir=/var/doc-home make dockerexample'
 #- docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 - docker images
 #- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$ECR_REGISTRY:latest"
