@@ -37,6 +37,7 @@ export SDK_ROOTDIR:=$(shell mktemp -d)
 #export ROOTDIR := $(realpath .)
 
 file:
+	slvdir:=$(hostdir)
 	pwd
 	cd $(SDK_ROOTDIR); pwd; ls -lrt
 	touch installfile
@@ -51,4 +52,4 @@ dockerexample: file
 	cp -r $(SDK_ROOTDIR) sdkdocdir
 	cd sdkdocdir; pwd
 	docker build . --tag test:16.04
-	docker run -v $(hostdir):/home/root --rm test:16.04  bash -c 'cd sdkdocdir; pwd; ls -lrt'
+	docker run -v $(slvdir):/home/root --rm test:16.04  bash -c 'cd sdkdocdir; pwd; ls -lrt'
