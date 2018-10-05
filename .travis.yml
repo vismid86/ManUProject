@@ -27,6 +27,7 @@ before_install:
 #- ssh-keyscan github.com >> ~/.ssh/known_hosts
 #- export hostdir=`pwd`
 #- cat $hostpath
+- ln -s `pwd` /var/doc-home
 - pwd; ls -lrt
 #- docker volume create docvol
 - docker --version
