@@ -25,12 +25,13 @@ before_install:
 - ssh-add ~/.ssh/travis_rsa > /dev/null
 - chmod u+w ~/.ssh/known_hosts
 - ssh-keyscan github.com >> ~/.ssh/known_hosts
+- docker volume create docvol
 - docker --version
 - docker build -f ${DOCKER_PATH}/Dockerfile --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}" .
 - >-
   docker run --name "${DOCKER_CONTAINER_NAME}" -dit 
   -v ~/.ssh/known_hosts:/root/.ssh/known_hosts
-  -v `pwd`:${DOCKER_WORK_DIR} -v /var/run/docker.sock:/var/run/docker.sock -v $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent
+  -v `pwd`:${DOCKER_WORK_DIR} --mount source=docvol,target=${DOCKER_WORK_DIR} -v /var/run/docker.sock:/var/run/docker.sock -v $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent
   "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
 #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'sudo apt-get -y install git xxd'
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt-r.sh'
