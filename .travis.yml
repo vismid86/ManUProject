@@ -72,6 +72,9 @@ script:
 - travis_wait 20 sudo docker exec $testfolder bash -c 'touch scripts/testfile; echo  "this is a modified file" >> scripts/testfile; make;./test.py; make -C scripts/ctest'
 - for f in $(find $testfolder -type f -name testfile); do echo "log_start for $f" >> $testfolder.log; cat $f >> $testfolder.log ; echo "log_end for $f" >> $testfolder.log; done
 - cat $testfolder.log
+- cat $testfolder.log | myriotatest/badge > $testfolder.svg
+- aws s3 cp $testfolder.svg s3://com.myriota.static-http/test/$repository/$branch/$testfolder/test/badge.svg $badge_args
+
 after_script:
 - docker logs ${DOCKER_TEST_CONTAINER}
 - docker ps -aq
@@ -85,7 +88,7 @@ after_script:
 stages:
   - name: build
   - name: test
-    if: type IN (cron, pull_request)
+    if: type IN (cron, push, pull_request)
   - name: test on ubuntu-18.04
     if: type IN (cron, push)
 
@@ -142,6 +145,12 @@ jobs:
 
   - stage: test
     name: Test on Ubuntu16.04
+    if: commit_message =~ /^\[ci-one\]$/
+    <<: *stage_test_16_04
+
+  - stage: test
+    name: Test on Ubuntu16.04-dummy
+    if: commit_message =~ /^\[ci-two\]$/
     <<: *stage_test_16_04
 
   - stage: test on ubuntu-18.04
