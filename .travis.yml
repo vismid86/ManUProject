@@ -81,6 +81,39 @@ after_script:
 - uname -a; lsb_release -a; df -h
 - ssh-add -D
 - rm ~/.ssh/travis_rsa
+
+stages:
+  - name: build
+  - name: test
+    if: type = pull_request OR type = cron
+  - name: test on ubuntu-18.04
+
+stage_test_16.04: &stage_test_16_04
+    env:
+      - DOCKER_REPO=travis-xenial
+      - DOCKER_WORK_DIR=/travisci-16.04
+      - DOCKER_TEST_CONTAINER=testcontainer-xenial
+      - PATH=/opt/gcc-arm/bin:$PATH
+      - DOCKERUSER=$DOCKERUSER1
+      - ECR_REGISTRY="101688609206.dkr.ecr.us-east-1.amazonaws.com/travisci-16.04"
+    before_install:
+      - sudo -H pip install awscli
+      - eval $(aws ecr get-login --region us-east-1 --no-include-email)
+      - docker pull "$ECR_REGISTRY:latest"
+
+stage_test_18.04: &stage_test_18_04
+    env:
+      - DOCKER_REPO=travis-bionic
+      - DOCKER_WORK_DIR=/travisci-18.04
+      - DOCKER_TEST_CONTAINER=testcontainer-bionic
+      - PATH=/opt/gcc-arm/bin:$PATH
+      - DOCKERUSER=$DOCKERUSER1
+      - ECR_REGISTRY="101688609206.dkr.ecr.us-east-1.amazonaws.com/travisci-18.04"
+    before_install:
+      - sudo -H pip install awscli
+      - eval $(aws ecr get-login --region us-east-1 --no-include-email)
+      - docker pull "$ECR_REGISTRY:latest"
+
 jobs:
   include:
   - stage: build
@@ -108,49 +141,17 @@ jobs:
 
   - stage: test
     name: Test on Ubuntu16.04
-    <<: *stage_test_16.04
+    <<: *stage_test_16_04
     before_script:  skip
     script: skip
     after_script: skip
 
-  - stage: test
+  - stage: test on ubuntu-18.04
     name: Test on Ubuntu18.04
-    <<: *stage_test_18.04
+    <<: *stage_test_18_04
     before_script:  skip
     script: skip
     after_script: skip
-
-stages:
-  - build
-  - test
-    if: type = pull_request OR type = cron
-  - test on ubuntu-18.04
-
-stage_test_16.04: &stage_test_16.04
-    env:
-    - DOCKER_REPO=travis-xenial
-    - DOCKER_WORK_DIR=/travisci-16.04
-    - DOCKER_TEST_CONTAINER=testcontainer-xenial
-    - PATH=/opt/gcc-arm/bin:$PATH
-    - DOCKERUSER=$DOCKERUSER1
-    - ECR_REGISTRY="101688609206.dkr.ecr.us-east-1.amazonaws.com/travisci-16.04"
-    before_install:
-    - sudo -H pip install awscli
-    - eval $(aws ecr get-login --region us-east-1 --no-include-email)
-    - docker pull "$ECR_REGISTRY:latest"
-
-stage_test_18.04: &stage_test_18.04
-    env:
-    - DOCKER_REPO=travis-bionic
-    - DOCKER_WORK_DIR=/travisci-18.04
-    - DOCKER_TEST_CONTAINER=testcontainer-bionic
-    - PATH=/opt/gcc-arm/bin:$PATH
-    - DOCKERUSER=$DOCKERUSER1
-    - ECR_REGISTRY="101688609206.dkr.ecr.us-east-1.amazonaws.com/travisci-18.04"
-    before_install:
-    - sudo -H pip install awscli
-    - eval $(aws ecr get-login --region us-east-1 --no-include-email)
-    - docker pull "$ECR_REGISTRY:latest"
 
 #addons:
 #  artifacts:
