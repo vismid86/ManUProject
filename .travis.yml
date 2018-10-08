@@ -103,17 +103,17 @@ stage_test_16.04: &stage_test_16_04
       - docker pull "$ECR_REGISTRY:latest"
 
 stage_test_18.04: &stage_test_18_04
-    env:
-      - DOCKER_REPO=travis-bionic
-      - DOCKER_WORK_DIR=/travisci-18.04
-      - DOCKER_TEST_CONTAINER=testcontainer-bionic
-      - PATH=/opt/gcc-arm/bin:$PATH
-      - DOCKERUSER=$DOCKERUSER1
-      - ECR_REGISTRY="101688609206.dkr.ecr.us-east-1.amazonaws.com/travisci-18.04"
-    before_install:
-      - sudo -H pip install awscli
-      - eval $(aws ecr get-login --region us-east-1 --no-include-email)
-      - docker pull "$ECR_REGISTRY:latest"
+      env:
+        - DOCKER_REPO=travis-bionic
+        - DOCKER_WORK_DIR=/travisci-18.04
+        - DOCKER_TEST_CONTAINER=testcontainer-bionic
+        - PATH=/opt/gcc-arm/bin:$PATH
+        - DOCKERUSER=$DOCKERUSER1
+        - ECR_REGISTRY="101688609206.dkr.ecr.us-east-1.amazonaws.com/travisci-18.04"
+      before_install:
+        - sudo -H pip install awscli
+        - eval $(aws ecr get-login --region us-east-1 --no-include-email)
+        - docker pull "$ECR_REGISTRY:latest"
 
 jobs:
   include:
@@ -144,13 +144,9 @@ jobs:
     name: Test on Ubuntu16.04
     <<: *stage_test_16_04
 
-
   - stage: test on ubuntu-18.04
     name: Test on Ubuntu18.04
-    - |
-      if [ $TRAVIS_COMMIT_MESSAGE = "test" ] ; then
-        <<: *stage_test_18_04
-      fi
+    <<: *stage_test_18_04
 
 #addons:
 #  artifacts:
