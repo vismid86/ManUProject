@@ -142,16 +142,11 @@ jobs:
   - stage: test
     name: Test on Ubuntu16.04
     <<: *stage_test_16_04
-    before_script:  skip
-    script: skip
-    after_script: skip
+
 
   - stage: test on ubuntu-18.04
     name: Test on Ubuntu18.04
     <<: *stage_test_18_04
-    before_script:  skip
-    script: skip
-    after_script: skip
 
 #addons:
 #  artifacts:
