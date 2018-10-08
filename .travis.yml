@@ -150,7 +150,7 @@ jobs:
 
   - stage: test
     name: Test on Ubuntu16.04-dummy
-    if:commit_message =~ /^\[ci-two\]$/
+    if: commit_message =~ /^\[ci-two\]$/
     <<: *stage_test_16_04
 
   - stage: test on ubuntu-18.04
