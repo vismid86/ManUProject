@@ -85,8 +85,9 @@ after_script:
 stages:
   - name: build
   - name: test
-    if: type = pull_request OR type = cron
+    if: type IN (cron, pull_request)
   - name: test on ubuntu-18.04
+    if: type IN (cron, push)
 
 stage_test_16.04: &stage_test_16_04
     env:
@@ -146,7 +147,10 @@ jobs:
 
   - stage: test on ubuntu-18.04
     name: Test on Ubuntu18.04
-    <<: *stage_test_18_04
+    - |
+      if [ $TRAVIS_COMMIT_MESSAGE = "test" ] ; then
+        <<: *stage_test_18_04
+      fi
 
 #addons:
 #  artifacts:
