@@ -73,7 +73,8 @@ script:
 - for f in $(find $testfolder -type f -name testfile); do echo "log_start for $f" >> $testfolder.log; cat $f >> $testfolder.log ; echo "log_end for $f" >> $testfolder.log; done
 - cat $testfolder.log
   #- cat $testfolder.log | myriotatest/badge > $testfolder.svg
-  #- aws s3 cp $testfolder.svg s3://com.myriota.static-http/test/$repository/$branch/$testfolder/test/badge.svg $badge_args
+  #create error
+- aws s3 cp $testfolder.svg s3://com.myriota.static-http/test/$repository/$branch/$testfolder/test/badge.svg $badge_args
 
 after_script:
 - docker logs ${DOCKER_TEST_CONTAINER}
