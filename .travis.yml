@@ -127,6 +127,7 @@ jobs:
     name: Build Ubuntu16.04
     #if: branch = travis-ci AND type = pull_request
     env:
+    - Build stage OS-Ubuntu16.04 Folder-Commslib
     - DOCKER_PATH=ubuntu16.04
     - DOCKER_BUILD_NAME=travis
     - DOCKER_CONTAINER_NAME=travis-cont-xenial
