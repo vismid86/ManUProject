@@ -6,7 +6,6 @@ branches:
   only:
   - travis-ci
 language:
-- c
 - python
 
 if: branch = travis-ci AND type IN (pull_request, push, cron)
