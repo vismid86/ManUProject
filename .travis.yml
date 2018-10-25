@@ -16,7 +16,8 @@ before_install:
 - sudo pip install awscli --upgrade --user
   #- sudo -H pip install --user --upgrade awscli
 - |
-        if [ $DOCKER_WORK_DIR=/travisci-18.04]; then
+        set -e
+        if [ $DOCKER_WORK_DIR=/travisci-18.04 ]; then
         echo "You arer goin in wrong"
         fi
 - chmod +x install-apt.sh
