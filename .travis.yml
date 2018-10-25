@@ -76,7 +76,7 @@ script:
   -v $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_REGION=$AWS_REGION -e host=$host
   $ECR_REGISTRY:latest
-- travis_wait 20 docker exec $testfolder bash -c 'uname -a; PATH=/opt/gcc-arm/bin:$PATH ; sudo apt-get install usbutils; lsb_release -a; echo $PATH; arm-none-eabi-gcc --version | grep -q 7.2.1; ./install-test.sh; lsusb; lsusb | grep "1366:"'
+- travis_wait 20 docker exec $testfolder bash -c 'uname -a; PATH=/opt/gcc-arm/bin:$PATH ; sudo apt-get install usbutils; lsb_release -a; echo $PATH; arm-none-eabi-gcc --version | grep -q 7.2.1; ./install-test.sh; lsusb'
 - travis_wait 20 sudo docker exec $testfolder bash -c 'touch scripts/testfile; echo  "this is a modified file" >> scripts/testfile; make;./test.py; make -C scripts/ctest'
 - for f in $(find $testfolder -type f -name testfile); do echo "log_start for $f" >> $testfolder.log; cat $f >> $testfolder.log ; echo "log_end for $f" >> $testfolder.log; done
 - cat $testfolder.log
