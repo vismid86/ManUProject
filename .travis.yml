@@ -166,8 +166,8 @@ jobs:
     <<: *stage_test_16_04
 
   - stage: $teststage
-    name: Test on Ubuntu18.04
-    <<: *stage_test_18_04
+    name: Test on Ubuntu16.04
+    <<: *stage_test_16_04
 
 #addons:
 #  artifacts:

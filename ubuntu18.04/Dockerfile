@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 MAINTAINER vismid
 
 # Install
-RUN apt-get update && apt-get -y install sudo coreutils openssh-client
+RUN apt-get update && apt-get -y install sudo coreutils openssh-client usbutils
 # Set Timezone for tzdata installation
 ENV DEBIAN_FRONTEND noninteractive
 ENV TZ 'Australia/Adelaide'
