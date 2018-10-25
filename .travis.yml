@@ -15,6 +15,10 @@ before_install:
 #- if [[ ! $(git diff-tree --no-commit-id --name-only -r HEAD | grep install-apt.sh) ]]; then travis_terminate 0; fi
 - sudo pip install awscli --upgrade --user
   #- sudo -H pip install --user --upgrade awscli
+- |
+        if [ $DOCKER_WORK_DIR=/travisci-18.04]; then
+        echo "You arer goin in wrong"
+        fi
 - chmod +x install-apt.sh
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
