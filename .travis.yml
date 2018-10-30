@@ -16,7 +16,7 @@ addons:
 
 # Test the skip condition
 # Test the specific folder condition
-
+ # Test two condition i one job
 if: branch = travis-ci AND type IN (pull_request, push, cron)
 before_install:
 #- if [[ ! $(git --no-pager diff --name-only FETCH_HEAD $(git merge-base FETCH_HEAD travis-ci) | grep install-apt.sh) ]]; then travis_terminate 0; fi
