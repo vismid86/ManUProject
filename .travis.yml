@@ -175,7 +175,7 @@ jobs:
 
   - stage: $teststage
     name: Test on Ubuntu16.04 math
-    if: (NOT commit_message =~ /\[ci / OR commit_message =~ /\[ci satellite\]/)
+    if: NOT commit_message =~ /\[ci/ OR commit_message =~ /\[ci math\]/
     <<: *stage_test_16_04
 
 #addons:
