@@ -162,17 +162,20 @@ jobs:
     - docker rmi $DOCKER_COMMIT_IMAGE --force
 
   - stage: $teststage
-    name: Test on Ubuntu16.04
-    if: commit_message =~ /(\[ci-one\]|\[ci-all\])/
+    name: Test on Ubuntu16.04 satellite
+    if: (NOT commit_message =~ /\[ci / OR commit_message =~ /\[ci satellite\]/)
+    #if: commit_message =~ /(\[ci-one\]|\[ci-all\])/
     <<: *stage_test_16_04
 
   - stage: $teststage
-    name: Test on Ubuntu16.04-dummy
-    if: commit_message =~ /(\[ci-two\]|\[ci-all\])/
+    name: Test on Ubuntu16.04-dummy devops
+    if: (NOT commit_message =~ /\[ci / OR commit_message =~ /\[ci devops\]/)
+    #if: commit_message =~ /(\[ci-two\]|\[ci-all\])/
     <<: *stage_test_16_04
 
   - stage: $teststage
-    name: Test on Ubuntu16.04
+    name: Test on Ubuntu16.04 math
+    if: (NOT commit_message =~ /\[ci / OR commit_message =~ /\[ci satellite\]/)
     <<: *stage_test_16_04
 
 #addons:
