@@ -15,6 +15,7 @@ addons:
     - python-pip
 
 # Test the skip condition
+# Test the specific folder condition
 
 if: branch = travis-ci AND type IN (pull_request, push, cron)
 before_install:
