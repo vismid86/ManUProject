@@ -2,9 +2,6 @@ dist: trusty
 sudo: required
 services:
 - docker
-branches:
-  only:
-  - travis-ci
 language:
 - c
 - python
@@ -14,183 +11,49 @@ addons:
     packages:
     - python-pip
 
-# Test the skip condition
-# Test the specific folder condition
-# Test two condition i one job
-# Test default condition. no ci used
-#
-if: branch = travis-ci AND type IN (pull_request, push, cron)
 before_install:
-#- if [[ ! $(git --no-pager diff --name-only FETCH_HEAD $(git merge-base FETCH_HEAD travis-ci) | grep install-apt.sh) ]]; then travis_terminate 0; fi
 - python2 -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
-#- if [[ ! $(git diff-tree --no-commit-id --name-only -r HEAD | grep install-apt.sh) ]]; then travis_terminate 0; fi
-- sudo -H pip install requests[security] awscli
-  #- lsusb | grep "1366:"
-  #- lsusb
-  #- sudo -H pip install --user --upgrade awscli
-- |
-        set -e
-        if [ ${DOCKER_WORK_DIR} = "/travisci-18.04" ]; then
-        echo "You arer goin in wrong"
-        fi
-- chmod +x install-apt.sh
-- tr -d '\r' < install-apt.sh > install-apt-r.sh
-- chmod +x install-apt-r.sh
-- chmod +x install-test.sh
-- openssl aes-256-cbc -K $encrypted_35f96cd56ce2_key -iv $encrypted_35f96cd56ce2_iv
-  -in travis_rsa.enc -out ~/.ssh/travis_rsa -d
-- eval "$(ssh-agent -s)" > /dev/null
-- chmod 600 ~/.ssh/travis_rsa
-- ssh-add ~/.ssh/travis_rsa > /dev/null
-#- chmod u+w ~/.ssh/known_hosts
-#- ssh-keyscan github.com >> ~/.ssh/known_hosts
-- export hostdir=`pwd`
-#- cat $hostpath
-- sudo ln -s `pwd` /var/doc-home
-- pwd; ls -lrt
-#- docker volume create docvol
-- docker --version
-- docker build -f ${DOCKER_PATH}/Dockerfile --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}" .
-#- >-
-#  docker run --name "${DOCKER_CONTAINER_NAME}" -dit
-#  -v ~/.ssh/known_hosts:/root/.ssh/known_hosts
-#  --mount source=docvol,target=${DOCKER_WORK_DIR} -v /var/run/docker.sock:/var/run/docker.sock -v $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent
-#  "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
-- >-
-  docker run --name "${DOCKER_CONTAINER_NAME}" -dit
-  -v ~/.ssh/known_hosts:/root/.ssh/known_hosts
-  -v `pwd`:${DOCKER_WORK_DIR} -v /var/run/docker.sock:/var/run/docker.sock -v $SSH_AUTH_SOCK:/ssh-agent
-  -e SSH_AUTH_SOCK=/ssh-agent -e hostdir=$(hostdir)
-  "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
-#- docker cp `pwd`/. ${DOCKER_CONTAINER_NAME}:${DOCKER_WORK_DIR}
-#- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'sudo apt-get -y install git xxd'
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; ls -lrt;./install-apt-r.sh'
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; docker ps -a; docker images; ls -la /root ;'
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'slvdir=/var/doc-home make dockerexample'
-#- docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
-- docker images
-#- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$ECR_REGISTRY:latest"
-#- sudo -H pip install awscli
-#- eval $(aws ecr get-login --region us-east-1 --no-include-email)
-#- docker push "$ECR_REGISTRY:latest"
-before_script:
-- openssl aes-256-cbc -K $encrypted_35f96cd56ce2_key -iv $encrypted_35f96cd56ce2_iv
-  -in travis_rsa.enc -out ~/.ssh/travis_rsa -d
-- eval "$(ssh-agent -s)" > /dev/null
-- chmod 600 ~/.ssh/travis_rsa
-- ssh-add ~/.ssh/travis_rsa > /dev/null
-#- ssh-keyscan github.com >> /root/.ssh/known_hosts
+
 script:
 - testfolder=scripts
-- echo "Test stage for ${DOCKER_REPO} is Started"
-- sudo docker run --name $testfolder -dit -v `pwd`:${DOCKER_WORK_DIR}
-  -v $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_REGION=$AWS_REGION -e host=$host
-  $ECR_REGISTRY:latest
-- docker exec $testfolder bash -c 'uname -a; PATH=/opt/gcc-arm/bin:$PATH ; sudo apt-get install usbutils; lsb_release -a; echo $PATH; lsusb; arm-none-eabi-gcc --version | grep -q 7.2.1; ./install-test.sh; lsusb'
-- travis_wait 20 sudo docker exec $testfolder bash -c 'touch scripts/testfile; echo  "this is a modified file" >> scripts/testfile; make;./test.py; make -C scripts/ctest'
-- for f in $(find $testfolder -type f -name testfile); do echo "log_start for $f" >> $testfolder.log; cat $f >> $testfolder.log ; echo "log_end for $f" >> $testfolder.log; done
-- cat $testfolder.log
-  #- cat $testfolder.log | myriotatest/badge > $testfolder.svg
-  #- aws s3 cp $testfolder.svg s3://com.myriota.static-http/test/$repository/$branch/$testfolder/test/badge.svg $badge_args
-
-after_script:
-- docker logs ${DOCKER_TEST_CONTAINER}
-- docker ps -aq
-- docker stop $(docker ps -aq)
-- docker rm $(docker ps -aq)
-- docker rmi $(docker images -q)
-- uname -a; lsb_release -a; df -h
-- ssh-add -D
-- rm ~/.ssh/travis_rsa
+- echo "Test stage is Started"
 
 stages:
-  - name: $buildstage
-  - name: $teststage
+  - name: build
+  - name: test
     if: type IN (cron, push, pull_request)
-#  - name: test on ubuntu-18.04
-#    if: type IN (cron, push)
-
-stage_test_16.04: &stage_test_16_04
-    env:
-      - DOCKER_REPO=travis-xenial
-      - DOCKER_WORK_DIR=/travisci-16.04
-      - DOCKER_TEST_CONTAINER=testcontainer-xenial
-      - PATH=/opt/gcc-arm/bin:$PATH
-      - DOCKERUSER=$DOCKERUSER1
-      - ECR_REGISTRY="${AWS_AC_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/travisci-16.04"
-      - ECR_REPO="https://${AWS_AC_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-    before_install:
-      - sudo -H pip install awscli
-      - >-
-        aws ecr get-login --no-include-email --region us-east-1 | awk '{printf $6}' |
-        docker login -u AWS $ECR_REPO --password-stdin
-      - docker pull "$ECR_REGISTRY:latest"
-
-stage_test_18.04: &stage_test_18_04
-      env:
-        - DOCKER_REPO=travis-bionic
-        - DOCKER_WORK_DIR=/travisci-18.04
-        - DOCKER_TEST_CONTAINER=testcontainer-bionic
-        - PATH=/opt/gcc-arm/bin:$PATH
-        - DOCKERUSER=$DOCKERUSER1
-        - ECR_REGISTRY="101688609206.dkr.ecr.us-east-1.amazonaws.com/travisci-18.04"
-      before_install:
-        - sudo -H pip install awscli
-        - eval $(aws ecr get-login --region us-east-1 --no-include-email)
-        - docker pull "$ECR_REGISTRY:latest"
+  - name: test next stage
+    if: type IN (cron, push)
 
 jobs:
   include:
-  - stage: $buildstage
+  - stage: build
     name: Build Ubuntu16.04
-    #if: branch = travis-ci AND type = pull_request
     env:
     - Build stage OS-Ubuntu16.04 Folder-Commslib
-    - DOCKER_PATH=ubuntu16.04
-    - DOCKER_BUILD_NAME=travis
-    - DOCKER_CONTAINER_NAME=travis-cont-xenial
-    - DOCKER_COMMIT_IMAGE=myriota-travis
-    - DOCKER_TAG=16.04
-    - DOCKER_REPO=travis-xenial
-    - DOCKER_WORK_DIR=/CI-test-xenial
-    - ECR_REGISTRY="101688609206.dkr.ecr.us-east-1.amazonaws.com/travisci-16.04"
-    #before_install
-    before_script:
-    - echo "Skip this stage"
     script:
     - echo "Build stage for 16.04 is Complete"
-    after_script:
-    - docker ps -aq
-    - docker stop $(docker ps -aq)
-    - docker rm $(docker ps -aq)
-    - docker rmi $DOCKER_COMMIT_IMAGE --force
 
-  - stage: $teststage
+  - stage: test
     name: Test on Ubuntu16.04 satellite
     if: (NOT commit_message =~ /\[ci / OR commit_message =~ /\[ci satellite\]/)
     #if: commit_message =~ /(\[ci-one\]|\[ci-all\])/
-    <<: *stage_test_16_04
+    script:
+    - echo "Test stage for 16.04 is Complete"
 
-  - stage: $teststage
+  - stage: Test
     name: Test on Ubuntu16.04-dummy devops
     if: (NOT commit_message =~ /\[ci / OR commit_message =~ /\[ci devops\]/)
-    #if: commit_message =~ /(\[ci-two\]|\[ci-all\])/
-    <<: *stage_test_16_04
+    script:
+    - echo "Test stage for 16.04 devops is Complete"
+    - bash -c "false"
 
-  - stage: $teststage
+  - stage: testnextstage
     name: Test on Ubuntu16.04 math
     if: NOT commit_message =~ /\[ci/ OR commit_message =~ /\[ci math\]/
-    <<: *stage_test_16_04
+    script:
+    - echo "Test next stage stage for 16.04 is Complete"
 
-#addons:
-#  artifacts:
-#    debug: true
-#    working_dir: "${PWD}/scripts"
-  #  paths:
-  #  - $(git ls-files -o | tr "\n" ":")
-  #  - $(ls /tmp/tmp.* | tr "\n" ':')
-  #  - $(find sdk/test -name myriota_build.log | tr '\n' ':')
 notifications:
   email:
     recipients:
@@ -203,9 +66,4 @@ notifications:
     on_error: always
 env:
   global:
-  - secure: NVagUdBlBZlynoGdj79Kk+gY+avD7AiHq/CAmIgxZk+1wZVa0uVExAuqwKnLKLtHWz+C8BFg05bFURLVt0/7BAEhzCF05f0dWyhEWyg3jL1rGDwqShllZAe1/o2wEreyBUlQ7uRaDUcQQUixn5DoBOT/t+9MTDOSI14xPkntQQoVsxtgJiqO0TLP93tc5RTACkcb5rDegAO+jJJHlSptUD5GCxRBwqnmq7WddAhYqVy840bZy+n1j50efMqMeDEJvCFTyRCvjUTmxts4zmvZTN8tEb7AtuPKIk/onUsAeKyFdFRdzZ7yzwI2MpKAXSOhJfHSQ0kMotKliNfin0I0oloMMnkbXSfkMracmZgboO44Frd6kqFf3DEIFYbDgziSfD5n1CR3I7aTepU1AstW87ojkbZSNxgb6b+9PFCFQCPOLeF+gwYVvnblG6zrrqufNEw4E1LoW/FjpY0CNcoKRONoRRh/1WQOTLuoaQaTotjO9QR6dCx5QJubrKHS7Zlfm5yRwlnvav18QiynLLCF/6PZ/5DFKvqXiKimyJ7t6JBJK3Lr6XHx/nGNIwR+3Dru5cDr+TNLn7T9Z267CoJkZPkCs1GDo/HwEl9r8Q9QO3o2/G+pDiP3GL9S/C7GBOShJaHXAI8S7xRg8I/FNjp7UtL0sOox50I5QPTtJUVJQa8=
-  - secure: MHVKlzKXA0wwubAZEwP3qM3MiQ0Wis3br2RLshCpqImC9WAQ4e+KybYqLlX9ideHnmOdrbTGPQgyolP/19AsEO3vvwhaId9e8vyWGvlDNsMdtPaeD0abHaNvs1vWHXV8dpBCw9pKPRZq1WZF3mTHvrjR2Xd1pXonX09znz+hYmz65+HgvaNuVJ9WPyTcyrW9peRoX5Sa8sMzJ9A0qiXl7qWIzFbqodW14fJo8UaVJNuPpB9d6yErHO/pVy1Q5ae2VPD2oevssWKZ7h+i5/fGzCZzeYg+HUq3pOkt9rHY2WMAYFbNjlHbEgsJzvSXL/QZ/Mtg9VQDHEm2va10iV7Hq3oOtXeGunQYp68U+IjcCTeHMp07eaxtI321bHx4Q1I2p26qhMXBFzPZkOL0aiPdQWHlzOfwYwU0D9B9S3FfqTW5zvyTuM3LEd9Zpe8ttIY1/r+XWOoY9uSrAGNnI/xQfsmDGsLha98S3hGVVJr7jFvy2DBL0wG87zmndcY7iAdpFIAKvkWJ0JxrtvEXXiCEMHg+M7LGTskPL6Ix7ANIqTq+ZtHYfVUm7fC9hxcdw5pYv0YrYwiVrVMCqlTtTowG1quLTtT9bB1uQSzg9qAKGQzZ4aBTAD3LdPmdtt5ehclF/fIk4ngxmHVmCfFNdYtsd6S5CCPxkEXNNVwtktBLLqQ=
-  - secure: GmZEreZAQZGhteN7B95dKmOhkQ5PwSX8d/L2KIbiqv7g5UQdBqXyKwXtFjbeRZ/9Jo56+oc+silnp+v+kWCRsZpNzf+ZGeHMfSHh1nwXGk9Yh7qKCHB9u4fsHdK6RzY4hTQCLCjSfTNHYpqXYk2cklJwLeG40FaaujCJoNPKr0PBUThu95h5bV+/kMeYQO1zNbMfnfY4AD4OQo9aBMDsyJyuBwTYlIrfH1KQsC83oJIJxIgAVgp/lh1VZBGN6YOrcT4axh5HptIFIB0ESjdhSxQ5rwhKPBUPNrLXr5SHxhrqo+DNMOD7ThuTn8BT9WhKXHSFCQzeErfs0ZG0PhvLLXSurzIKTW+nvQ9t8lGkfKwunpw+BGMc8hA+TKMT8+9FxniqfZt3JIr7+li/8F7nQMEWDp9ps0LUJPBWOOIat/evmK7q5JKcmtRR78W7GoPzHESSKgwjSvOVOBuBxcvG4O/xpatV5Da4PC+2aJrvhoYk6zm4K5Al0R+IDqYtZEUptGIPY8iLrhXL3k1HlnSc1SXwfIl5/k7x+XHa13PMAXlQItAgnq98S0bDUlpMIOmBQOmC10kQKjsZ3WJJlErvozYg1lAYvIW44YzdYyGrOI+YTKOoJJ9fPNzv0pQWz7uuG3UMAdaSB+O4dL9lvBkYiWt+76YV3pa9xf3M+FXWLt0=
-  - secure: jDaJkszgNzBNPt/6wQQ1UvkE6llcZGv3B+yYm23abwgq0ZkWWcbTOnhsH1XAkwo+IqxtyjQsu/+/uw8h99pQuQvOPig7B33BSuQQ+rGuW8NtvTba+2dk3/uoBT+fbzMqNCPrvHxujf3nBjjJRLuKSrP52lhATKFL9ionhBDzJmOnC3Uo8eRWI44mRGpkEgapB6DpISv2qH4UxttGaGlYMZ8F9lW/8Mu7vQcPjUqWg2D+C5Yei14FE/Y+pJMc9teq/KS/kQV4CDuFKIwMmuDT0YgX9OUXGlGd6U0nI3MqSjxrLdO57x8mVFI294CwCnV0RB5F+xznAg/hOv0/LpvZDytGfYaZ4qfuLSISmHjFOzAkQIvP1sK0gMyqmr3+jWBfb5FFufM31R+Y8OOPIX45/vUql8lXaq6hu7NCQGz80WknpX1YaesqAMvlcTGMGT0C2+2WebkFE5fF9C5iz92tflYnpqeX8Eh76k2BW7PSkDkHYjKJITFnDn4EpUV9njlH1uklrlG3GoQhPrcU8D6C3CuVShUiW5cd9H/Z2tSTOQfh2fwmTa0vOw3OHpUI7U5RX++VVU7CmER633fjJ7EIlaksVFybCSG2l5bNONQvS99TlPUF46i0uhARfYZioIG7M/nlE+SUO+W+WtkHNM/opalJ38cPIfWNBumMXl2DpwU=
-  - secure: "H3sx4E2dkj9X5YS3qQb5BYQq+nSeJd4pEbNRpFmDYsau8LwEGzJy66Z9jrX5eTABjsf7N/2Vh8ZHKqU1WvicKtrLJOpIYGNicFdcFoSejm+RG36wybovNBzkQSDWHnbij0H3XfnD5NjwnQ1yIUhdkDnY6GdvQUrqCp0Td2mkNFgRrMGH5MChxpnR51wRkGqhm+bO8odJueb/AxZh1RoGRTxtEFXHwwh9D+s1T4c8qaAt6Jpuse4yMLb3ziA7IACjmYSnSmc/yPgsZ47BjzVs+7d8iQPP6mF8YaQrqIsLRyNTAJqyXi+x7RGFJIOkE+q2S17ZyR92SG+JGaJcgubfMl8NgcpOAMHx+m9eM+ahtJ/NbnND/acyIOizZXKpLx7UGGB+CS9MdF/yjG9tlbpXcToRK9Wh0n73rEb3F0LXOBoZpBYcaoZ5P3PZoHi36eUzDtWvFC6XNFu8BSOzERvxbt0BSuPuP8loiCueEp7MphbD0n9I+r+5CAnq40087+4bpi/QbuRe37Pk1vA1kE3B5bW98vTa+8tQt+23T/d4+zuomRk3/u4u+PStjG5Pt1OqLh7ixZ7itYdGsCmv4f8+DXWVuFKAAaUiJDOgspyklmUMTzpGEc/CBcmC5kdmKBWeK2xhAs6ezTOaQx7lTBRkCRbhLZMFhxdyJnFRjzH7lxg="
-  
+  - testenv=vis 
