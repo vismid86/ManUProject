@@ -26,6 +26,8 @@ stages:
     if: type IN (cron, push)
 
 jobs:
+  allow_failures:
+  - stage: test
   include:
   - stage: build
     name: Build Ubuntu16.04
