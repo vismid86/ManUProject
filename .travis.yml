@@ -42,15 +42,15 @@ jobs:
     name: mac os
     os: osx
     script:
-    - brew update
-    - sw_vers
+    - sh install-mac.sh
+    - export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/opt/openssl/lib/pkgconfig
 
   - stage: test
     name: Test on Ubuntu16.04 satellite
     testtype: test1
     if: (NOT commit_message =~ /\[ci / OR commit_message =~ /\[ci satellite\]/)
     #if: commit_message =~ /(\[ci-one\]|\[ci-all\])/
-    script: 
+    script:
     - echo "Test stage for 16.04 is Complete"
 
   - stage: test
