@@ -44,6 +44,7 @@ jobs:
     script:
     #- xcode-select --install
     #- brew install /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg
+    - sed -i '/ImageMagick/,$d' install-mac.sh
     - sh install-mac.sh
     - export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/opt/openssl/lib/pkgconfig
 
