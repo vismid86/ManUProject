@@ -48,11 +48,11 @@ ln -sf /usr/local/bin/gcc-7 /usr/local/bin/gcc
 ln -sf /usr/local/bin/g++-7 /usr/local/bin/g++
 
 # now build ImageMagick from source (will be build with gcc 7 from above)
-ImageMagickVer=7.0.6-10
-curl -O http://www.imagemagick.org/download/releases/ImageMagick-${ImageMagickVer}.tar.xz
-tar xf ImageMagick-${ImageMagickVer}.tar.xz
-cd ImageMagick-${ImageMagickVer}
-./configure
-make
-sudo make install
+#ImageMagickVer=7.0.6-10
+#curl -O http://www.imagemagick.org/download/releases/ImageMagick-${ImageMagickVer}.tar.xz
+#tar xf ImageMagick-${ImageMagickVer}.tar.xz
+#cd ImageMagick-${ImageMagickVer}
+#./configure
+#make
+#sudo make install
 
