@@ -22,12 +22,12 @@ stages:
   - name: build
   - name: test
     if: type IN (cron, push, pull_request)
-  - name: test next stage
+  - name: testnextstage
     if: type IN (cron, push)
 
 jobs:
   allow_failures:
-  - testtype: prod
+  - stage: test 
   include:
   - stage: build
     name: Build Ubuntu16.04
@@ -38,14 +38,14 @@ jobs:
 
   - stage: test
     name: Test on Ubuntu16.04 satellite
-    testtype: test
+    testtype: test1
     if: (NOT commit_message =~ /\[ci / OR commit_message =~ /\[ci satellite\]/)
     #if: commit_message =~ /(\[ci-one\]|\[ci-all\])/
     script:
     - echo "Test stage for 16.04 is Complete"
 
-  - stage: Test
-    testtype: test
+  - stage: test
+    testtype: test2
     name: Test on Ubuntu16.04-dummy devops
     if: (NOT commit_message =~ /\[ci / OR commit_message =~ /\[ci devops\]/)
     script:
