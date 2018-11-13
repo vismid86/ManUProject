@@ -26,8 +26,10 @@ stages:
     if: type IN (cron, push)
 
 jobs:
+  fast_finish: true
   allow_failures:
-  - stage: test 
+#  - stage: test 
+  - testtype: test2
   include:
   - stage: build
     name: Build Ubuntu16.04
@@ -50,7 +52,7 @@ jobs:
     if: (NOT commit_message =~ /\[ci / OR commit_message =~ /\[ci devops\]/)
     script:
     - echo "Test stage for 16.04 devops is Complete"
-    - bash -c "false"
+    - bash -c "sleep 30; false"
 
   - stage: testnextstage
     name: Test on Ubuntu16.04 math
