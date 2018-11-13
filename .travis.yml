@@ -28,7 +28,7 @@ stages:
 jobs:
   fast_finish: true
   allow_failures:
-#  - stage: test 
+#  - stage: test
 #  - testtype: test2
   include:
   - stage: build
@@ -37,6 +37,7 @@ jobs:
     - Build stage OS-Ubuntu16.04 Folder-Commslib
     script:
     - echo "Build stage for 16.04 is Complete"
+
   - stage: build
     name: mac os
     os: osx
@@ -49,7 +50,7 @@ jobs:
     testtype: test1
     if: (NOT commit_message =~ /\[ci / OR commit_message =~ /\[ci satellite\]/)
     #if: commit_message =~ /(\[ci-one\]|\[ci-all\])/
-    script: false
+    script: 
     - echo "Test stage for 16.04 is Complete"
 
   - stage: test
@@ -79,4 +80,4 @@ notifications:
     on_error: always
 env:
   global:
-  - testenv=vis 
+  - testenv=vis
