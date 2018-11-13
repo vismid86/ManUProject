@@ -27,7 +27,7 @@ stages:
 
 jobs:
   allow_failures:
-  - stage: test
+  - testtype: prod
   include:
   - stage: build
     name: Build Ubuntu16.04
@@ -38,12 +38,14 @@ jobs:
 
   - stage: test
     name: Test on Ubuntu16.04 satellite
+    testtype: test
     if: (NOT commit_message =~ /\[ci / OR commit_message =~ /\[ci satellite\]/)
     #if: commit_message =~ /(\[ci-one\]|\[ci-all\])/
     script:
     - echo "Test stage for 16.04 is Complete"
 
   - stage: Test
+    testtype: test
     name: Test on Ubuntu16.04-dummy devops
     if: (NOT commit_message =~ /\[ci / OR commit_message =~ /\[ci devops\]/)
     script:
@@ -52,6 +54,7 @@ jobs:
 
   - stage: testnextstage
     name: Test on Ubuntu16.04 math
+    testtype: prod
     if: NOT commit_message =~ /\[ci/ OR commit_message =~ /\[ci math\]/
     script:
     - echo "Test next stage stage for 16.04 is Complete"
