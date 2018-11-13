@@ -42,6 +42,8 @@ jobs:
     name: mac os
     os: osx
     script:
+    - xcode-select --install
+    - brew install /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg
     - sh install-mac.sh
     - export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/local/opt/openssl/lib/pkgconfig
 
