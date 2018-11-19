@@ -13,6 +13,7 @@ addons:
 
 before_install:
 - python2 -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
+- - if [[ ! $(git diff-tree --no-commit-id --name-only -m -r HEAD | grep -w 'install-apt.sh\|devops\/requirements.txt\|Dockerfile-ubuntu-16.04\|Dockerfile-ubuntu-18.04') ]]; then export ECR_TAG=latest; else export ECR_TAG=$TRAVIS_PULL_REQUEST; fi
 
 script:
 - testfolder=scripts
@@ -23,7 +24,7 @@ stages:
   - name: test
     if: type IN (cron, push, pull_request)
   - name: testnextstage
-    if: type IN (cron, push)
+    if: type IN (cron)
 
 jobs:
   fast_finish: true
