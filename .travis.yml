@@ -41,7 +41,7 @@ before_install:
 - docker images
 - docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$DOCKERUSER/${DOCKER_REPO}"
  # Login to DockerHub and Push the image
-- echo $DOCKERPASS | docker login -u $DOCKERUSER --password-stdin
+- echo $DOCKERPASS1 | docker login -u $DOCKERUSER1 --password-stdin
 - docker push $DOCKERUSER/${DOCKER_REPO}
 
 #Script for test stage
@@ -103,8 +103,8 @@ jobs:
         - DOCKER_TEST_CONTAINER=testcontainer-xenial
         - PATH=/opt/gcc-arm/bin:$PATH
       before_install:
-        - echo $DOCKERPASS | docker login -u $DOCKERUSER --password-stdin
-        - docker pull $DOCKERUSER/${DOCKER_REPO}:latest
+        - echo $DOCKERPASS1 | docker login -u $DOCKERUSER1 --password-stdin
+        - docker pull $DOCKERUSER1/${DOCKER_REPO}:latest
       # Calls script stage defined above for tests.
       # Calls after script Cleans containers and image.
 # Test stage to pull the image from repo. Execute tests.
