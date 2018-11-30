@@ -26,7 +26,7 @@ before_install:
 - ssh-keyscan github.com >> ~/.ssh/known_hosts
 - git config --global user.email "root@travisciformyriota.com"
 - git config --global user.name "travisci"
-
+- git config --global push.default simple
 #- chmod u+w ~/.ssh/known_hosts
 #- ssh-keyscan github.com >> ~/.ssh/known_hosts
 - export hostdir=`pwd`
@@ -46,7 +46,7 @@ before_install:
   -v ~/.ssh/known_hosts:/root/.ssh/known_hosts
   -v ~/.gitconfig:/root/.gitconfig
   -v `pwd`:${DOCKER_WORK_DIR} -v /var/run/docker.sock:/var/run/docker.sock -v $SSH_AUTH_SOCK:/ssh-agent
-  -e SSH_AUTH_SOCK=/ssh-agent -e hostdir=$(hostdir)
+  -e SSH_AUTH_SOCK=/ssh-agent 
   "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
 #- docker cp `pwd`/. ${DOCKER_CONTAINER_NAME}:${DOCKER_WORK_DIR}
 #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'sudo apt-get -y install git xxd'
@@ -140,7 +140,7 @@ jobs:
     - DOCKER_REPO=travis-xenial
     - DOCKER_WORK_DIR=/CI-test-xenial
     - ECR_REGISTRY="101688609206.dkr.ecr.us-east-1.amazonaws.com/travisci-16.04"
-    #before_install
+  #before_install
     before_script:
     - echo "Skip this stage"
     script:
@@ -150,20 +150,6 @@ jobs:
     - docker stop $(docker ps -aq)
     - docker rm $(docker ps -aq)
     - docker rmi $DOCKER_COMMIT_IMAGE --force
-
-  - stage: $teststage
-    name: Test on Ubuntu16.04
-    if: commit_message =~ /(\[ci-one\]|\[ci-all\])/
-    <<: *stage_test_16_04
-
-  - stage: $teststage
-    name: Test on Ubuntu16.04-dummy
-    if: commit_message =~ /(\[ci-two\]|\[ci-all\])/
-    <<: *stage_test_16_04
-
-  - stage: $teststage
-    name: Test on Ubuntu18.04
-    <<: *stage_test_18_04
 
 #addons:
 #  artifacts:

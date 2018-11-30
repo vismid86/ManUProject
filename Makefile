@@ -52,7 +52,9 @@ dockerexample: file
 SDK_DIR:=$(shell mktemp -d)/sdk-release
 release:
 	git clone git@github.com:vismid86/ManUProject.git $(SDK_DIR)
-	@cd $(SDK_DIR); echo "something" > clonetestfile.txt;
+	@cd $(SDK_DIR);
+	echo "something" > clonetestfile.txt; \
+	ls -lrt; \
 	git add -u; \
 	git add *;\
 	git commit -m "clone commit messaage";\
