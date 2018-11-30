@@ -31,7 +31,7 @@ before_install:
 #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'make'
 #- docker commit "${DOCKER_CONTAINER_NAME}" "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 #- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "vismid86/testrepo:latest"
-#- echo $DOCKERPASS | docker login -u $DOCKERUSER --password-stdin
+#- echo $DOCKERPASS1 | docker login -u $DOCKERUSER1 --password-stdin
 #- docker push "$vismid86/testrepo:latest"
 ###################DO Not use commit using ecr registry as it disturbs myriota image#############
 #- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$ECR_REGISTRY:latest"
@@ -144,7 +144,7 @@ jobs:
       - DOCKER_TEST_CONTAINER=testcontainer-xenial
       - DOCKERUSER=$DOCKERUSER1
     before_install:
-      - echo $DOCKERPASS | docker login -u $DOCKERUSER --password-stdin
+      - echo $DOCKERPASS1 | docker login -u $DOCKERUSER1 --password-stdin
       - docker pull "vismid86/testrepo:latest"
     script:
       - >-
