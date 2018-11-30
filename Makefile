@@ -48,3 +48,16 @@ dockerexample: file
 	cd sdkdocdir; pwd
 	docker build . --tag test:16.04
 	docker run -v $(slvdir):/home/root --rm test:16.04  bash -c 'cd sdkdocdir; pwd; ls -lrt'
+
+SDK_DIR:=$(shell mktemp -d)/sdk-release
+release:
+	git clone git@github.com:vismid86/ManUProject.git $(SDK_DIR)
+	@cd $(SDK_DIR); echo "something" > clonetestfile.txt;
+	git add -u; \
+	git add *;\
+	git commit -m "clone commit messaage";\
+	git tag 0.0.1;\
+	git push; git push --tags
+
+
+

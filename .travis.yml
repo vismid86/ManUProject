@@ -5,11 +5,12 @@ services:
 branches:
   only:
   - travis-ci
+  - gitpush-travis
 language:
 - c
 - python
 
-if: branch = travis-ci AND type IN (pull_request, push, cron)
+#if: branch = travis-ci AND type IN (pull_request, push, cron)
 before_install:
 #- if [[ ! $(git --no-pager diff --name-only FETCH_HEAD $(git merge-base FETCH_HEAD travis-ci) | grep install-apt.sh) ]]; then travis_terminate 0; fi
 - python2 -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
@@ -17,12 +18,15 @@ before_install:
 - chmod +x install-apt.sh
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
-- chmod +x install-test.sh
 - openssl aes-256-cbc -K $encrypted_35f96cd56ce2_key -iv $encrypted_35f96cd56ce2_iv
   -in travis_rsa.enc -out ~/.ssh/travis_rsa -d
 - eval "$(ssh-agent -s)" > /dev/null
 - chmod 600 ~/.ssh/travis_rsa
 - ssh-add ~/.ssh/travis_rsa > /dev/null
+- ssh-keyscan github.com >> ~/.ssh/known_hosts
+- git config --global user.email "root@travisciformyriota.com"
+- git config --global user.name "travisci"
+
 #- chmod u+w ~/.ssh/known_hosts
 #- ssh-keyscan github.com >> ~/.ssh/known_hosts
 - export hostdir=`pwd`
@@ -40,6 +44,7 @@ before_install:
 - >-
   docker run --name "${DOCKER_CONTAINER_NAME}" -dit
   -v ~/.ssh/known_hosts:/root/.ssh/known_hosts
+  -v ~/.gitconfig:/root/.gitconfig
   -v `pwd`:${DOCKER_WORK_DIR} -v /var/run/docker.sock:/var/run/docker.sock -v $SSH_AUTH_SOCK:/ssh-agent
   -e SSH_AUTH_SOCK=/ssh-agent -e hostdir=$(hostdir)
   "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
@@ -47,7 +52,7 @@ before_install:
 #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'sudo apt-get -y install git xxd'
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; ls -lrt;./install-apt-r.sh'
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; docker ps -a; docker images; ls -la /root ;'
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'slvdir=/var/doc-home make dockerexample'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'make release'
 #- docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 - docker images
 #- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "$ECR_REGISTRY:latest"
@@ -87,8 +92,8 @@ after_script:
 
 stages:
   - name: $buildstage
-  - name: $teststage
-    if: type IN (cron, push, pull_request)
+#  - name: $teststage
+#    if: type IN (cron, push, pull_request)
 #  - name: test on ubuntu-18.04
 #    if: type IN (cron, push)
 
@@ -172,14 +177,11 @@ notifications:
   email:
     recipients:
     - vismid89@gmail.com
-    on_pull_requests: false
     on_success: always
     on_failure: always
     on_start: always
     on_cancel: always
     on_error: always
-  slack:
-    secure: eNX2TvooEww0VXGzl37bCukl/O2CQNS6Nk5kjxftaUigibFsDGR9bizPMmuBEHkSvwPcrrwT51x5/+rAdW1JR2U9megZViHHMlvJBJvMGL6BGZE53viyb4MSQ90/JGPn7tjGACUcdF0e1kpfysLMHy09isD+RZ7Cq1FHDDxZX8KL4OB/4P/rb0wos2FPlkImSHZbKaD3FiPI6sPaAS9tD4Y0nfNmQOJhTNuhrPxrR/HrQoPeDv17j/fgQUjGCwHy0KwVqu88SMHpCqboLcT1uxqlpHXf0a8EbEqU7cQyVLjhOZWZNsPR9JiSXWsD52jBDB8iIpDT3Ol2Qx/L3XbiSHr8ObCoglJKdppQbrCG3Gtiewo+SpfE9izqGVqKMku/3rXbMNQGdAOQmFSXvzjrrob4F1mkurbygQT+cvTKRmmnJ+mWe6kOP6wkj6vsGWDQ2/Hdpn1ayBX9BOOHWslk1oP4JHdHlE1xSqXhfn4zSs2HFZmdoHHLOi3TBuKFxIUi2WYxNgbuf12JD9UqTQYBui22y0DUzGEpwK8xUTDYf3xnOG8tJZie8Ug7Wvz0o8+MC2ehY7ZMi/u/bVoAs4qpy/GrsGS05s3NlSDbd0ervI220rPOTJbVUzHD9tAkgqxgd9Wb2SVzZP4k92gB93/S68J8mzc/EbMGNaIm+NNme60=
 env:
   global:
   - secure: NVagUdBlBZlynoGdj79Kk+gY+avD7AiHq/CAmIgxZk+1wZVa0uVExAuqwKnLKLtHWz+C8BFg05bFURLVt0/7BAEhzCF05f0dWyhEWyg3jL1rGDwqShllZAe1/o2wEreyBUlQ7uRaDUcQQUixn5DoBOT/t+9MTDOSI14xPkntQQoVsxtgJiqO0TLP93tc5RTACkcb5rDegAO+jJJHlSptUD5GCxRBwqnmq7WddAhYqVy840bZy+n1j50efMqMeDEJvCFTyRCvjUTmxts4zmvZTN8tEb7AtuPKIk/onUsAeKyFdFRdzZ7yzwI2MpKAXSOhJfHSQ0kMotKliNfin0I0oloMMnkbXSfkMracmZgboO44Frd6kqFf3DEIFYbDgziSfD5n1CR3I7aTepU1AstW87ojkbZSNxgb6b+9PFCFQCPOLeF+gwYVvnblG6zrrqufNEw4E1LoW/FjpY0CNcoKRONoRRh/1WQOTLuoaQaTotjO9QR6dCx5QJubrKHS7Zlfm5yRwlnvav18QiynLLCF/6PZ/5DFKvqXiKimyJ7t6JBJK3Lr6XHx/nGNIwR+3Dru5cDr+TNLn7T9Z267CoJkZPkCs1GDo/HwEl9r8Q9QO3o2/G+pDiP3GL9S/C7GBOShJaHXAI8S7xRg8I/FNjp7UtL0sOox50I5QPTtJUVJQa8=
@@ -187,4 +189,3 @@ env:
   - secure: GmZEreZAQZGhteN7B95dKmOhkQ5PwSX8d/L2KIbiqv7g5UQdBqXyKwXtFjbeRZ/9Jo56+oc+silnp+v+kWCRsZpNzf+ZGeHMfSHh1nwXGk9Yh7qKCHB9u4fsHdK6RzY4hTQCLCjSfTNHYpqXYk2cklJwLeG40FaaujCJoNPKr0PBUThu95h5bV+/kMeYQO1zNbMfnfY4AD4OQo9aBMDsyJyuBwTYlIrfH1KQsC83oJIJxIgAVgp/lh1VZBGN6YOrcT4axh5HptIFIB0ESjdhSxQ5rwhKPBUPNrLXr5SHxhrqo+DNMOD7ThuTn8BT9WhKXHSFCQzeErfs0ZG0PhvLLXSurzIKTW+nvQ9t8lGkfKwunpw+BGMc8hA+TKMT8+9FxniqfZt3JIr7+li/8F7nQMEWDp9ps0LUJPBWOOIat/evmK7q5JKcmtRR78W7GoPzHESSKgwjSvOVOBuBxcvG4O/xpatV5Da4PC+2aJrvhoYk6zm4K5Al0R+IDqYtZEUptGIPY8iLrhXL3k1HlnSc1SXwfIl5/k7x+XHa13PMAXlQItAgnq98S0bDUlpMIOmBQOmC10kQKjsZ3WJJlErvozYg1lAYvIW44YzdYyGrOI+YTKOoJJ9fPNzv0pQWz7uuG3UMAdaSB+O4dL9lvBkYiWt+76YV3pa9xf3M+FXWLt0=
   - secure: jDaJkszgNzBNPt/6wQQ1UvkE6llcZGv3B+yYm23abwgq0ZkWWcbTOnhsH1XAkwo+IqxtyjQsu/+/uw8h99pQuQvOPig7B33BSuQQ+rGuW8NtvTba+2dk3/uoBT+fbzMqNCPrvHxujf3nBjjJRLuKSrP52lhATKFL9ionhBDzJmOnC3Uo8eRWI44mRGpkEgapB6DpISv2qH4UxttGaGlYMZ8F9lW/8Mu7vQcPjUqWg2D+C5Yei14FE/Y+pJMc9teq/KS/kQV4CDuFKIwMmuDT0YgX9OUXGlGd6U0nI3MqSjxrLdO57x8mVFI294CwCnV0RB5F+xznAg/hOv0/LpvZDytGfYaZ4qfuLSISmHjFOzAkQIvP1sK0gMyqmr3+jWBfb5FFufM31R+Y8OOPIX45/vUql8lXaq6hu7NCQGz80WknpX1YaesqAMvlcTGMGT0C2+2WebkFE5fF9C5iz92tflYnpqeX8Eh76k2BW7PSkDkHYjKJITFnDn4EpUV9njlH1uklrlG3GoQhPrcU8D6C3CuVShUiW5cd9H/Z2tSTOQfh2fwmTa0vOw3OHpUI7U5RX++VVU7CmER633fjJ7EIlaksVFybCSG2l5bNONQvS99TlPUF46i0uhARfYZioIG7M/nlE+SUO+W+WtkHNM/opalJ38cPIfWNBumMXl2DpwU=
   - secure: "H3sx4E2dkj9X5YS3qQb5BYQq+nSeJd4pEbNRpFmDYsau8LwEGzJy66Z9jrX5eTABjsf7N/2Vh8ZHKqU1WvicKtrLJOpIYGNicFdcFoSejm+RG36wybovNBzkQSDWHnbij0H3XfnD5NjwnQ1yIUhdkDnY6GdvQUrqCp0Td2mkNFgRrMGH5MChxpnR51wRkGqhm+bO8odJueb/AxZh1RoGRTxtEFXHwwh9D+s1T4c8qaAt6Jpuse4yMLb3ziA7IACjmYSnSmc/yPgsZ47BjzVs+7d8iQPP6mF8YaQrqIsLRyNTAJqyXi+x7RGFJIOkE+q2S17ZyR92SG+JGaJcgubfMl8NgcpOAMHx+m9eM+ahtJ/NbnND/acyIOizZXKpLx7UGGB+CS9MdF/yjG9tlbpXcToRK9Wh0n73rEb3F0LXOBoZpBYcaoZ5P3PZoHi36eUzDtWvFC6XNFu8BSOzERvxbt0BSuPuP8loiCueEp7MphbD0n9I+r+5CAnq40087+4bpi/QbuRe37Pk1vA1kE3B5bW98vTa+8tQt+23T/d4+zuomRk3/u4u+PStjG5Pt1OqLh7ixZ7itYdGsCmv4f8+DXWVuFKAAaUiJDOgspyklmUMTzpGEc/CBcmC5kdmKBWeK2xhAs6ezTOaQx7lTBRkCRbhLZMFhxdyJnFRjzH7lxg="
-  
