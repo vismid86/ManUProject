@@ -2,9 +2,9 @@ dist: trusty
 sudo: required
 services:
 - docker
-branches:
-  only:
-  - travis-ci
+  #branches:
+  #only:
+  #- travis-ci
 cache:
   ccache: true
   pip: true
