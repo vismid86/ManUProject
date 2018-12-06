@@ -113,11 +113,11 @@ jobs:
         - PATH=/opt/gcc-arm/bin:$PATH
       before_install:
         - |
-        ##### TEST TYPE####
-         if [ "$TRAVIS_EVENT_TYPE" == "cron" ]; then export TEST_TYPE=nightly-test; fi
-         if [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then export TEST_TYPE=test; fi
-         if [ "$TRAVIS_EVENT_TYPE" == "push" ]; then export TEST_TYPE=pushtest; fi
-         echo $TEST_TYPE
+          ##### TEST TYPE####
+           if [ "$TRAVIS_EVENT_TYPE" == "cron" ]; then export TEST_TYPE=nightly-test; fi
+           if [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then export TEST_TYPE=test; fi
+           if [ "$TRAVIS_EVENT_TYPE" == "push" ]; then export TEST_TYPE=pushtest; fi
+           echo $TEST_TYPE
         - echo $DOCKERPASS1 | docker login -u $DOCKERUSER1 --password-stdin
         - docker pull $DOCKERUSER1/${DOCKER_REPO}:latest
       # Calls script stage defined above for tests.
