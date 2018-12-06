@@ -57,10 +57,9 @@ after_script :
         #####TEST LOG FILES########
         echo "Testlog"
         if [ "$TRAVIS_EVENT_TYPE" == "cron" ]; then echo "you are in cron"; fi
-- docker ps -aq
-- docker stop $(docker ps -aq)
-- docker rm $(docker ps -aq)
-- docker rmi $(docker images -q)
+- |
+        ###Docker cleanup####
+        docker ps -aq; docker stop $(docker ps -aq); docker rm $(docker ps -aq); docker rmi $(docker images -q)
 
 jobs:
 # Run if only the branch is travis-ci
