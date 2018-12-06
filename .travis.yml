@@ -27,6 +27,12 @@ language:
 
 # Build docker image, Run container, Install packages, Push it to repository
 before_install:
+- |
+        ##### TEST TYPE####
+         if [ "$TRAVIS_EVENT_TYPE" == "cron" ]; then export TEST_TYPE=nightly-test; fi
+         if [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then export TEST_TYPE=test; fi
+         if [ "$TRAVIS_EVENT_TYPE" == "push" ]; then export TEST_TYPE=pushtest; fi
+         echo $TEST_TYPE
 - chmod +x install-apt.sh
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
@@ -161,7 +167,3 @@ notifications:
     on_start: always
     on_cancel: always
     on_error: always
-  slack:
-    secure: eNX2TvooEww0VXGzl37bCukl/O2CQNS6Nk5kjxftaUigibFsDGR9bizPMmuBEHkSvwPcrrwT51x5/+rAdW1JR2U9megZViHHMlvJBJvMGL6BGZE53viyb4MSQ90/JGPn7tjGACUcdF0e1kpfysLMHy09isD+RZ7Cq1FHDDxZX8KL4OB/4P/rb0wos2FPlkImSHZbKaD3FiPI6sPaAS9tD4Y0nfNmQOJhTNuhrPxrR/HrQoPeDv17j/fgQUjGCwHy0KwVqu88SMHpCqboLcT1uxqlpHXf0a8EbEqU7cQyVLjhOZWZNsPR9JiSXWsD52jBDB8iIpDT3Ol2Qx/L3XbiSHr8ObCoglJKdppQbrCG3Gtiewo+SpfE9izqGVqKMku/3rXbMNQGdAOQmFSXvzjrrob4F1mkurbygQT+cvTKRmmnJ+mWe6kOP6wkj6vsGWDQ2/Hdpn1ayBX9BOOHWslk1oP4JHdHlE1xSqXhfn4zSs2HFZmdoHHLOi3TBuKFxIUi2WYxNgbuf12JD9UqTQYBui22y0DUzGEpwK8xUTDYf3xnOG8tJZie8Ug7Wvz0o8+MC2ehY7ZMi/u/bVoAs4qpy/GrsGS05s3NlSDbd0ervI220rPOTJbVUzHD9tAkgqxgd9Wb2SVzZP4k92gB93/S68J8mzc/EbMGNaIm+NNme60=
-#    template:
-#      - "Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository_slug}@%{branch} by %{author} %{result} in %{duration}"
