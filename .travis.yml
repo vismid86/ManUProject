@@ -6,7 +6,7 @@ language:
 - c
 - python
 
-if: fork = false AND branch = master
+if: fork = false AND branch = master AND type IN (cron, pull_request)
 
 before_install:
 - python2 -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
@@ -84,7 +84,7 @@ stages:
 #  - name: test local
 #    if: type IN (cron, pull_request)
   - name: test local
-    if: type IN (push) AND branch = master AND tag IS present
+    if: type IN (pull_request) AND branch = master AND tag IS present
 
 deploy:
   on:
