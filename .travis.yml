@@ -6,7 +6,7 @@ language:
 - c
 - python
 
-if: fork = false AND branch = master AND type IN (cron, pull_request)
+if: fork = false AND branch = master
 
 before_install:
 - python2 -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
@@ -78,6 +78,7 @@ after_script:
 
 stages:
   - name: build
+    if: type IN (cron, pull_request)
 #  - name: test myriota
 #    if: type IN (cron, push, pull_request)
   - name: test local
