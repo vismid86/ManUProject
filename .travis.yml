@@ -81,8 +81,8 @@ stages:
     if: type IN (cron, pull_request)
 #  - name: test myriota
 #    if: type IN (cron, push, pull_request)
-  - name: test local
-    if: type IN (cron, pull_request)
+#  - name: test local
+#    if: type IN (cron, pull_request)
   - name: test local
     if: type IN (push) AND branch = master AND tag IS present
 
