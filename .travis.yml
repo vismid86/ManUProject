@@ -161,6 +161,7 @@ jobs:
       - docker pull "vismid86/travis-xenial:latest"
     before_script:
       - echo "Skip this stage"
+      - false
     script:
       - >-
         sudo docker run --name ${DOCKER_TEST_CONTAINER} -dit
