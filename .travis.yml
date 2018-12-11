@@ -168,6 +168,7 @@ jobs:
         -v $SSH_AUTH_SOCK:/ssh-agent
         -e SSH_AUTH_SOCK=/ssh-agent
         ${DOCKERUSER}/${DOCKER_REPO}:latest
+      - false;
       - chmod +x install-test.sh
       - sh install-test.sh
 
