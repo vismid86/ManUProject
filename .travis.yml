@@ -158,6 +158,8 @@ jobs:
     before_install:
       - echo $DOCKERPASS1 | docker login -u $DOCKERUSER1 --password-stdin
       - docker pull "vismid86/travis-xenial:latest"
+    before_script:
+      - echo "Skip this stage"
     script:
       - >-
         sudo docker run --name ${DOCKER_TEST_CONTAINER} -dit
