@@ -157,7 +157,7 @@ jobs:
       - DOCKERUSER=$DOCKERUSER1
     before_install:
       - echo $DOCKERPASS1 | docker login -u $DOCKERUSER1 --password-stdin
-      - docker pull "vismid86/testrepo:latest"
+      - docker pull "vismid86/travis-xenial:latest"
     script:
       - >-
         sudo docker run --name ${DOCKER_TEST_CONTAINER} -dit
@@ -165,6 +165,9 @@ jobs:
         -v $SSH_AUTH_SOCK:/ssh-agent
         -e SSH_AUTH_SOCK=/ssh-agent
         ${DOCKERUSER}/${DOCKER_REPO}:latest
+      - chmod +x install-test.sh
+      - sh install-test.sh
+
 #  - stage: test myriota
 #    name: Test on Ubuntu16.04
 #    if: commit_message =~ /(\[ci-one\]|\[ci-all\])/
