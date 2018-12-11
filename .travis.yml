@@ -84,7 +84,7 @@ stages:
 #  - name: test local
 #    if: type IN (cron, pull_request)
   - name: test local
-    if: type IN (push) AND tag IS present
+    if: type IN (push) AND tag =~ ^sdkv
 
 deploy:
   on:
@@ -156,7 +156,7 @@ jobs:
       - DOCKER_TEST_CONTAINER=testcontainer-xenial
       - DOCKERUSER=$DOCKERUSER1
     before_install:
-      - if [[ ! $(git diff --name-only HEAD...${TRAVIS_BRANCH} | grep -w 'README.md') ]]; then echo "Not a Release. Expected Failure"; travis_terminate 1; fi
+            #      - if [[ ! $(git diff --name-only HEAD...${TRAVIS_BRANCH} | grep -w 'README.md') ]]; then echo "Not a Release. Expected Failure"; travis_terminate 1; fi
       - echo $DOCKERPASS1 | docker login -u $DOCKERUSER1 --password-stdin
       - docker pull "vismid86/travis-xenial:latest"
     before_script:
