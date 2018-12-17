@@ -84,7 +84,7 @@ stages:
 #  - name: test local
 #    if: type IN (cron, pull_request)
   - name: test local
-    if: type IN (push) AND tag =~ /^(?i=sdk).*$/
+    if: type IN (push) AND tag =~ /^(sdk|SDK).*$/
 
 deploy:
   on:
