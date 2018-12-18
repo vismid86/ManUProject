@@ -30,3 +30,4 @@ trigegr pull request build
 git
 
 test it
+test the tag
