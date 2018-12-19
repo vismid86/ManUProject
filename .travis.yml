@@ -27,7 +27,7 @@ before_install:
   -e SSH_AUTH_SOCK=/ssh-agent
   "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
   #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; ls -lrt;./install-apt-r.sh'
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'false > /dev/null'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'true > /dev/null'
 #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'make'
 #- docker commit "${DOCKER_CONTAINER_NAME}" "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 #- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "vismid86/testrepo:latest"
