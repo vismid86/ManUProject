@@ -80,7 +80,7 @@ deploy:
   provider: script
   script: make -C scripts/ctest
   on:
-    branch: master
+    branch: test-autodeploy
     tags: false
 
 stages:
