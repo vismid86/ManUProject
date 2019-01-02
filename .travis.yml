@@ -28,6 +28,8 @@ before_install:
   "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
   #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; ls -lrt;./install-apt-r.sh'
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'true > /dev/null'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'git ls-remote --tags origin'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'git tag'
 #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'make'
 #- docker commit "${DOCKER_CONTAINER_NAME}" "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
 #- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "vismid86/testrepo:latest"
