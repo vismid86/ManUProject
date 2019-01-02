@@ -86,7 +86,7 @@ deploy:
 stages:
   - name: build
 #  - name: test myriota
-    if: type IN (cron, pull_request)
+#    if: type IN (cron, pull_request)
   - name: test local
     if: type IN (cron)
 
