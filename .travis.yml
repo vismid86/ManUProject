@@ -81,12 +81,12 @@ deploy:
   script: make -C scripts/ctest
   on:
     branch: test-autodeploy
-    tags: false
+    # tags: false
 
 stages:
   - name: build
 #  - name: test myriota
-#    if: type IN (cron, pull_request)
+    if: type IN (push)
   - name: test local
     if: type IN (cron)
 
