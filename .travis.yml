@@ -10,6 +10,7 @@ if: fork = false AND type IN (cron, pull_request, push)
 
 before_install:
 - python2 -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
+- echo ${DOCKERPATH}
 - chmod +x install-apt.sh
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
 - chmod +x install-apt-r.sh
@@ -28,7 +29,7 @@ before_install:
   -v ~/.ssh/known_hosts:/root/.ssh/known_hosts
   -e SSH_AUTH_SOCK=/ssh-agent
   "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; ls -lrt;./install-apt-r.sh'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c '${DOCKERPATH};echo $PATH;pwd; ls -lrt;./install-apt-r.sh'
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; docker ps -a; docker images; ls -la /root ;'
 #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'make'
 #- docker commit "${DOCKER_CONTAINER_NAME}" "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
@@ -199,3 +200,4 @@ env:
   - secure: GmZEreZAQZGhteN7B95dKmOhkQ5PwSX8d/L2KIbiqv7g5UQdBqXyKwXtFjbeRZ/9Jo56+oc+silnp+v+kWCRsZpNzf+ZGeHMfSHh1nwXGk9Yh7qKCHB9u4fsHdK6RzY4hTQCLCjSfTNHYpqXYk2cklJwLeG40FaaujCJoNPKr0PBUThu95h5bV+/kMeYQO1zNbMfnfY4AD4OQo9aBMDsyJyuBwTYlIrfH1KQsC83oJIJxIgAVgp/lh1VZBGN6YOrcT4axh5HptIFIB0ESjdhSxQ5rwhKPBUPNrLXr5SHxhrqo+DNMOD7ThuTn8BT9WhKXHSFCQzeErfs0ZG0PhvLLXSurzIKTW+nvQ9t8lGkfKwunpw+BGMc8hA+TKMT8+9FxniqfZt3JIr7+li/8F7nQMEWDp9ps0LUJPBWOOIat/evmK7q5JKcmtRR78W7GoPzHESSKgwjSvOVOBuBxcvG4O/xpatV5Da4PC+2aJrvhoYk6zm4K5Al0R+IDqYtZEUptGIPY8iLrhXL3k1HlnSc1SXwfIl5/k7x+XHa13PMAXlQItAgnq98S0bDUlpMIOmBQOmC10kQKjsZ3WJJlErvozYg1lAYvIW44YzdYyGrOI+YTKOoJJ9fPNzv0pQWz7uuG3UMAdaSB+O4dL9lvBkYiWt+76YV3pa9xf3M+FXWLt0=
   - secure: jDaJkszgNzBNPt/6wQQ1UvkE6llcZGv3B+yYm23abwgq0ZkWWcbTOnhsH1XAkwo+IqxtyjQsu/+/uw8h99pQuQvOPig7B33BSuQQ+rGuW8NtvTba+2dk3/uoBT+fbzMqNCPrvHxujf3nBjjJRLuKSrP52lhATKFL9ionhBDzJmOnC3Uo8eRWI44mRGpkEgapB6DpISv2qH4UxttGaGlYMZ8F9lW/8Mu7vQcPjUqWg2D+C5Yei14FE/Y+pJMc9teq/KS/kQV4CDuFKIwMmuDT0YgX9OUXGlGd6U0nI3MqSjxrLdO57x8mVFI294CwCnV0RB5F+xznAg/hOv0/LpvZDytGfYaZ4qfuLSISmHjFOzAkQIvP1sK0gMyqmr3+jWBfb5FFufM31R+Y8OOPIX45/vUql8lXaq6hu7NCQGz80WknpX1YaesqAMvlcTGMGT0C2+2WebkFE5fF9C5iz92tflYnpqeX8Eh76k2BW7PSkDkHYjKJITFnDn4EpUV9njlH1uklrlG3GoQhPrcU8D6C3CuVShUiW5cd9H/Z2tSTOQfh2fwmTa0vOw3OHpUI7U5RX++VVU7CmER633fjJ7EIlaksVFybCSG2l5bNONQvS99TlPUF46i0uhARfYZioIG7M/nlE+SUO+W+WtkHNM/opalJ38cPIfWNBumMXl2DpwU=
   - secure: "H3sx4E2dkj9X5YS3qQb5BYQq+nSeJd4pEbNRpFmDYsau8LwEGzJy66Z9jrX5eTABjsf7N/2Vh8ZHKqU1WvicKtrLJOpIYGNicFdcFoSejm+RG36wybovNBzkQSDWHnbij0H3XfnD5NjwnQ1yIUhdkDnY6GdvQUrqCp0Td2mkNFgRrMGH5MChxpnR51wRkGqhm+bO8odJueb/AxZh1RoGRTxtEFXHwwh9D+s1T4c8qaAt6Jpuse4yMLb3ziA7IACjmYSnSmc/yPgsZ47BjzVs+7d8iQPP6mF8YaQrqIsLRyNTAJqyXi+x7RGFJIOkE+q2S17ZyR92SG+JGaJcgubfMl8NgcpOAMHx+m9eM+ahtJ/NbnND/acyIOizZXKpLx7UGGB+CS9MdF/yjG9tlbpXcToRK9Wh0n73rEb3F0LXOBoZpBYcaoZ5P3PZoHi36eUzDtWvFC6XNFu8BSOzERvxbt0BSuPuP8loiCueEp7MphbD0n9I+r+5CAnq40087+4bpi/QbuRe37Pk1vA1kE3B5bW98vTa+8tQt+23T/d4+zuomRk3/u4u+PStjG5Pt1OqLh7ixZ7itYdGsCmv4f8+DXWVuFKAAaUiJDOgspyklmUMTzpGEc/CBcmC5kdmKBWeK2xhAs6ezTOaQx7lTBRkCRbhLZMFhxdyJnFRjzH7lxg="
+  - DOCKERPATH="PATH=/usr/local/texlive/bin/x86_64-linux:/opt/gcc-arm/bin:$PATH"
