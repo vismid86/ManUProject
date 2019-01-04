@@ -29,7 +29,7 @@ before_install:
   -v ~/.ssh/known_hosts:/root/.ssh/known_hosts
   -e SSH_AUTH_SOCK=/ssh-agent
   "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
-- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c '${DOCKERPATH};echo $PATH;pwd; ls -lrt;./install-apt-r.sh'
+- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'echo ${DOCKERPATH};echo $PATH;pwd; ls -lrt;./install-apt-r.sh'
 - docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'pwd; docker ps -a; docker images; ls -la /root ;'
 #- docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'make'
 #- docker commit "${DOCKER_CONTAINER_NAME}" "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
