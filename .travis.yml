@@ -79,7 +79,7 @@ after_script:
 
 deploy:
   provider: script
-  script: make -C scripts/ctest
+  script: make -C scripts/ctest; ls -lrt; pwd
   on:
     branch: test-autodeploy
     # tags: false
