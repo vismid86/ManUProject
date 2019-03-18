@@ -1,4 +1,4 @@
-set -e
+#set -e
 
 CHANGED_FILES=`git diff --name-only HEAD~1`
 IS_CMS=False
