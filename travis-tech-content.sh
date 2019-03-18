@@ -1,4 +1,4 @@
-#set -e
+#! /bin/bash
 
 CHANGED_FILES=`git diff --name-only HEAD~1`
 IS_CMS=False
@@ -13,9 +13,8 @@ done
 
 if [[ $IS_CMS == True ]]; then
   echo "CMS files found, continue"
-  export cms=1
 else
   echo "No changes to CMS content; Terminating"
-  export cms=0
+  travis_terminate 0
 fi
 
