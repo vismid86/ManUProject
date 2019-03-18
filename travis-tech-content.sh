@@ -12,9 +12,8 @@ for CHANGED_FILE in $CHANGED_FILES; do
 done
 
 if [[ $IS_CMS == True ]]; then
-  echo "CMS files found, continue"
+	echo "CMS files found, continue"
 else
-  echo "No changes to CMS content; Terminating"
-  echo "travis_terminate 0"
+	travis_terminate 0
 fi
 
