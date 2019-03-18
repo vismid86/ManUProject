@@ -18,7 +18,7 @@ if [[ $IS_CMS == True ]]; then
 	echo $cmsskip
 else
 	echo "No CMS files found"
-	skip=1
+	cmsskip=1
 	export cmsskip
 	echo $cmsskip
 	# exit 0
