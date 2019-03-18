@@ -12,7 +12,7 @@ before_install:
   if [[ "$TRAVIS_EVENT_TYPE" = "pull_request" ]]; then export TEST_TYPE=nightly-test; fi
     echo "${TEST_TYPE}"; echo "${ECR_TAG}"
     echo "$TRAVIS_COMMIT_MESSAGE"
-- chmod +x travis-tech-content.sh; ./travis-tech-content.sh
+- ./travis-tech-content.sh
 - python2 -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
 - chmod +x install-apt.sh
 - tr -d '\r' < install-apt.sh > install-apt-r.sh
