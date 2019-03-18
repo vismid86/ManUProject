@@ -14,6 +14,7 @@ done
 if [[ $IS_CMS == True ]]; then
 	echo "CMS files found, continue"
 else
-	travis_terminate 0
+	 exit 0
+	# travis_terminate 0
 fi
 
