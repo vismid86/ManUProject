@@ -13,8 +13,15 @@ done
 
 if [[ $IS_CMS == True ]]; then
 	echo "CMS files found, continue"
+	cmsskip=0
+	export cmsskip
+	echo $cmsskip
 else
-	 exit 0
+	echo "No CMS files found"
+	skip=1
+	export cmsskip
+	echo $cmsskip
+	# exit 0
 	# travis_terminate 0
 fi
 
