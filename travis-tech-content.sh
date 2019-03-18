@@ -13,8 +13,9 @@ done
 
 if [[ $IS_CMS == True ]]; then
   echo "CMS files found, continue"
+  export cms=1
 else
   echo "No changes to CMS content; Terminating"
-  travis_terminate 0
+  export cms=0
 fi
 
