@@ -12,7 +12,27 @@ before_install:
   if [[ "$TRAVIS_EVENT_TYPE" = "pull_request" ]]; then export TEST_TYPE=nightly-test; fi
     echo "${TEST_TYPE}"; echo "${ECR_TAG}"
     echo "$TRAVIS_COMMIT_MESSAGE"
-
+- |
+  CHANGED_FILES=`git diff --name-only HEAD~1`
+  IS_CMS=False
+  CMS="apps\/contents\/"
+  for CHANGED_FILE in $CHANGED_FILES; do
+    if [[ $CHANGED_FILE =~ $CMS ]]; then
+      IS_CMS=True
+      break
+    fi
+  done
+  if [[ $IS_CMS == True ]]; then
+        echo "CMS files found, continue"
+  else
+        echo "No CMS files found"
+        #cmsskip=1
+        #export cmsskip
+        #echo $cmsskip
+        # exit 0
+        travis_terminate 0
+   fi
+- echo "sucess"
 install:
 - ./travis-tech-content.sh
 #- docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "vismid86/testrepo:latest"

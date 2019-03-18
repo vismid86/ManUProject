@@ -22,6 +22,6 @@ else
 	#export cmsskip
 	#echo $cmsskip
 	# exit 0
-	travis_terminate 0
+	set +e; travis_terminate 0
 fi
 
