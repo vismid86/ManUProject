@@ -143,23 +143,23 @@ jobs:
       - python2 -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
       - >-
         if [[ ! $(git diff --name-only HEAD~1 | grep -w 'install-apt.sh\|devops\/requirements.txt\|Dockerfile-ubuntu-16.04\|Dockerfile-ubuntu-18.04') ]]; then
-          set -e
-          echo "Building Image"
-          chmod +x install-apt.sh
-          docker build -f ${DOCKER_FILE} --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}" .
-          docker run --name "${DOCKER_CONTAINER_NAME}" -dit\
-          -v `pwd`:${DOCKER_WORK_DIR}\
-          "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
-          docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt.sh'
-          docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'PATH=/usr/local/texlive/bin/x86_64-linux:/opt/gcc-arm/bin:$PATH; echo $PATH; ./install-test.sh';
-          docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
-          docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "${ECR_REGISTRY}:latest"
-          sudo -H pip install awscli
-          aws ecr get-login --no-include-email --region ${AWS_REGION} | awk '{printf $6}' |\
-          docker login -u AWS $ECR_REPO_TEST --password-stdin
-          docker push "${ECR_REGISTRY}:latest"
+        set -e;
+        echo "Building Image";
+        chmod +x install-apt.sh;
+        docker build -f ${DOCKER_FILE} --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}" .;
+        docker run --name "${DOCKER_CONTAINER_NAME}" -dit\
+        -v `pwd`:${DOCKER_WORK_DIR}\
+        "${DOCKER_BUILD_NAME}:${DOCKER_TAG}";
+        docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt.sh';
+        docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'PATH=/usr/local/texlive/bin/x86_64-linux:/opt/gcc-arm/bin:$PATH; echo $PATH; ./install-test.sh';
+        docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}";
+        docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "${ECR_REGISTRY}:latest";
+        sudo -H pip install awscli;
+        aws ecr get-login --no-include-email --region ${AWS_REGION} | awk '{printf $6}' |\
+        docker login -u AWS $ECR_REPO_TEST --password-stdin;
+        docker push "${ECR_REGISTRY}:latest";
         else
-          echo "Pull the latest image"
+        echo "Pull the latest image";
         fi
     before_script: skip
   - stage: build
