@@ -83,6 +83,9 @@ stages:
 #    if: type IN (cron, push, pull_request)
 #  - name: test local
 #    if: type IN (cron, pull_request)
+# Deploy stage
+  - name: deploy_setup
+    if: type IN (push) AND branch = test-deploy4
   - name: test local
     if: type IN (push) AND tag =~ /^(sdk|SDK).*$/
 
@@ -125,6 +128,41 @@ stage_test_18.04: &stage_test_18_04
 
 jobs:
   include:
+  - stage: deploy_setup
+    name: Continuous Deployment
+    env:
+    - DOCKER_FILE=Dockerfile-ubuntu-16.04
+    - DOCKER_BUILD_NAME=travisci-build
+    - DOCKER_TAG=16.04
+    - DOCKER_CONTAINER_NAME=travisci-build-16.04
+    - DOCKER_WORK_DIR=/travisci-16.04
+    - DOCKER_COMMIT_IMAGE=travisci-myriota
+    - ECR_REGISTRY="${AWS_ACC_TEST}.dkr.ecr.${AWS_REGION}.amazonaws.com/travisci-16.04"
+    before_install:
+      - git diff-tree --no-commit-id --name-only -m -r HEAD
+      - python2 -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
+      - |
+          ##### Check Image Status #####
+          if [[ ! $(git diff --name-only HEAD~1 | grep -w 'install-apt.sh\|devops\/requirements.txt\|Dockerfile-ubuntu-16.04\|Dockerfile-ubuntu-18.04') ]]; then
+            set -e
+            echo "Building Image"
+            chmod +x install-apt.sh
+            docker build -f ${DOCKER_FILE} --tag "${DOCKER_BUILD_NAME}:${DOCKER_TAG}" .
+            docker run --name "${DOCKER_CONTAINER_NAME}" -dit\
+            -v `pwd`:${DOCKER_WORK_DIR}\
+            "${DOCKER_BUILD_NAME}:${DOCKER_TAG}"
+            docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c './install-apt.sh'
+            docker exec "${DOCKER_CONTAINER_NAME}" /bin/sh -c 'PATH=/usr/local/texlive/bin/x86_64-linux:/opt/gcc-arm/bin:$PATH; echo $PATH; ./install-test.sh';
+            docker commit "${DOCKER_CONTAINER_NAME}"  "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}"
+            docker tag "${DOCKER_COMMIT_IMAGE}:${DOCKER_TAG}" "${ECR_REGISTRY}:latest"
+            sudo -H pip install awscli
+            aws ecr get-login --no-include-email --region ${AWS_REGION} | awk '{printf $6}' |\
+            docker login -u AWS $ECR_REPO_TEST --password-stdin
+            docker push "${ECR_REGISTRY}:latest"
+          else
+            echo "Pull the latest image"
+          fi
+    before_script: skip
   - stage: build
     name: Build Ubuntu16.04
     #if: branch = travis-ci AND type = pull_request
