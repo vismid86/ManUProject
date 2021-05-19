@@ -15,5 +15,5 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: test
-      run: make runtest/test_seed
+      run: make -C runtest test_seed
 
