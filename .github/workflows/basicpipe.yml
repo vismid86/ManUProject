@@ -1,0 +1,21 @@
+name: actions-pipe-test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+    - uses: actions/checkout@v2
+    - name: test
+      run: |
+        yes | grep -v 'n' | head -n10 | tee afile
+        cat afile | grep -q 'y'
+        yes | head -n10 | tee bfile | grep 'yes'
+        cat bfile
