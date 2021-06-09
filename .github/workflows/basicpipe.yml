@@ -17,5 +17,5 @@ jobs:
       run: |
         yes | grep -v 'n' | head -n10 | tee afile
         cat afile | grep -q 'y'
-        yes | head -n10 | tee bfile | grep 'yes'
+        yes | head -n10 | tee bfile | grep 'y'
         cat bfile
