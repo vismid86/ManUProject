@@ -1,0 +1,20 @@
+name: test-pipe-fail
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+    
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+    - uses: actions/checkout@v2
+    - name: test
+      shell: bash {0}
+      run: make -C runtest test_seed
+
