@@ -19,3 +19,5 @@ jobs:
         cat afile | grep -q 'y'
         yes | head -n10 | tee bfile | grep 'y'
         cat bfile
+        yes | tee cfile | grep -v 'n' | head -n10
+        cat cfile
